@@ -104,4 +104,11 @@ class ApiTests {
         }
     }
 
+    @Test
+    fun testCompetitionCreations() {
+        testLeagueCreation()
+        testCupCreation()
+        testTournamentCreation()
+    }
+
 }

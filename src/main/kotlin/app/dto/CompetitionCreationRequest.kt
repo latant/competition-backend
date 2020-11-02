@@ -11,7 +11,6 @@ sealed class CompetitionCreationRequest {
     @Serializable
     data class Participant(val name: String, val description: String = "")
 
-    @Serializable
     @SerialName("League")
     data class League(
         val name: String,
@@ -23,7 +22,6 @@ sealed class CompetitionCreationRequest {
         val roundCount: Int? = null,
     ) : CompetitionCreationRequest()
 
-    @Serializable
     @SerialName("Cup")
     data class Cup(
         val name: String,
@@ -34,7 +32,6 @@ sealed class CompetitionCreationRequest {
         val participants: List<Participant>
     ) : CompetitionCreationRequest()
 
-    @Serializable
     @SerialName("Tournament")
     data class Tournament(
         val name: String,

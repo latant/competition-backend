@@ -10,6 +10,8 @@ class Match(
     val description: String,
 ): Entity() {
 
+    val state = State.NOT_STARTED_YET
+
     @Relationship(MATCH_IN_COMPETITION)
     lateinit var competition: Competition
 
@@ -21,5 +23,12 @@ class Match(
 
     @Relationship(PARTICIPANT_IN_MATCH, direction = INCOMING)
     lateinit var participations: List<MatchParticipation>
+
+
+    enum class State {
+        NOT_STARTED_YET,
+        ONGOING,
+        ENDED
+    }
 
 }

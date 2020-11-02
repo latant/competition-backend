@@ -6,12 +6,15 @@ import java.time.LocalDateTime
 
 @NodeEntity
 abstract class Competition : Entity() {
+
     abstract val name: String
     abstract val description: String
     abstract val logo: ByteArray?
     abstract val dateTime: LocalDateTime
     abstract val displayColor: String
     abstract val participantCount: Int
+
+    val state = State.NOT_STARTED_YET
 
     @Relationship(PARTICIPANT_IN_COMPETITION, direction = INCOMING)
     lateinit var participants: List<CompetitionParticipant>
@@ -24,4 +27,11 @@ abstract class Competition : Entity() {
 
     @Relationship(STAGE_OF_COMPETITION, direction = INCOMING)
     lateinit var stages: List<CompetitionStage>
+
+    enum class State {
+        NOT_STARTED_YET,
+        ONGOING,
+        ENDED,
+    }
+
 }

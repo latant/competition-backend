@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 import java.time.ZonedDateTime
 
 @Serializable
-sealed class CompetitionCreation {
+sealed class CompetitionCreationRequest {
 
     @Serializable
     data class Participant(val name: String, val description: String = "")
@@ -21,7 +21,7 @@ sealed class CompetitionCreation {
         val description: String = "",
         val participants: List<Participant>,
         val roundCount: Int? = null,
-    ) : CompetitionCreation()
+    ) : CompetitionCreationRequest()
 
     @Serializable
     @SerialName("Cup")
@@ -32,7 +32,7 @@ sealed class CompetitionCreation {
         val displayColor: String = "#0000ff",
         val description: String = "",
         val participants: List<Participant>
-    ) : CompetitionCreation()
+    ) : CompetitionCreationRequest()
 
     @Serializable
     @SerialName("Tournament")
@@ -45,6 +45,6 @@ sealed class CompetitionCreation {
         val participants: List<Participant>,
         val groupCount: Int,
         val playOffParticipantCount: Int,
-    ) : CompetitionCreation()
+    ) : CompetitionCreationRequest()
 
 }

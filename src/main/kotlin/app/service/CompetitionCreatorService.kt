@@ -2,7 +2,7 @@ package app.service
 
 import app.dao.CompetitionGraph
 import app.dao.load
-import app.dto.CompetitionCreation
+import app.dto.CompetitionCreationRequest
 import app.model.*
 import app.security.UserPrincipal
 import atUTC
@@ -10,18 +10,18 @@ import org.neo4j.ogm.session.Session
 
 object CompetitionCreatorService {
 
-    fun createCompetition(userPrincipal: UserPrincipal, competitionCreation: CompetitionCreation): Long {
+    fun createCompetition(userPrincipal: UserPrincipal, competitionCreation: CompetitionCreationRequest): Long {
         return CompetitionGraph.readWriteTransaction {
             val user = load<User>(userPrincipal.id, 1)!!
             when (competitionCreation) {
-                is CompetitionCreation.League -> createLeague(user, competitionCreation)
-                is CompetitionCreation.Cup -> createCup(user, competitionCreation)
-                is CompetitionCreation.Tournament -> createTournament(user, competitionCreation)
+                is CompetitionCreationRequest.League -> createLeague(user, competitionCreation)
+                is CompetitionCreationRequest.Cup -> createCup(user, competitionCreation)
+                is CompetitionCreationRequest.Tournament -> createTournament(user, competitionCreation)
             }
         }
     }
 
-    private fun Session.createLeague(creator: User, leagueCreation: CompetitionCreation.League): Long {
+    private fun Session.createLeague(creator: User, leagueCreation: CompetitionCreationRequest.League): Long {
         val league = leagueCreation.toNode()
         league.creator = creator
         league.participants = leagueCreation.participants.map { it.toNode() }
@@ -50,7 +50,7 @@ object CompetitionCreatorService {
         return league.id!!
     }
 
-    private fun Session.createCup(creator: User, cupCreation: CompetitionCreation.Cup): Long {
+    private fun Session.createCup(creator: User, cupCreation: CompetitionCreationRequest.Cup): Long {
         val cup = cupCreation.toNode()
         cup.creator = creator
         cup.participants = cupCreation.participants.map { it.toNode() }
@@ -65,7 +65,7 @@ object CompetitionCreatorService {
         return cup.id!!
     }
 
-    private fun Session.createTournament(creator: User, tournamentCreation: CompetitionCreation.Tournament): Long {
+    private fun Session.createTournament(creator: User, tournamentCreation: CompetitionCreationRequest.Tournament): Long {
         val tournament = tournamentCreation.toNode()
         tournament.creator = creator
         tournament.participants = tournamentCreation.participants.map { it.toNode() }.shuffled()
@@ -108,9 +108,9 @@ object CompetitionCreatorService {
         return tournament.id!!
     }
 
-    private fun CompetitionCreation.Participant.toNode() = CompetitionParticipant(name, description)
+    private fun CompetitionCreationRequest.Participant.toNode() = CompetitionParticipant(name, description)
 
-    private fun CompetitionCreation.League.toNode() = League(
+    private fun CompetitionCreationRequest.League.toNode() = League(
         name = name,
         description = description,
         logo = null,
@@ -119,7 +119,7 @@ object CompetitionCreatorService {
         participantCount = participants.size
     )
 
-    private fun CompetitionCreation.Cup.toNode() = Cup(
+    private fun CompetitionCreationRequest.Cup.toNode() = Cup(
         name = name,
         description = description,
         dateTime = dateTime.atUTC(),
@@ -128,7 +128,7 @@ object CompetitionCreatorService {
         participantCount = participants.size
     )
 
-    private fun CompetitionCreation.Tournament.toNode() = Tournament(
+    private fun CompetitionCreationRequest.Tournament.toNode() = Tournament(
         name = name,
         description = description,
         logo = null,

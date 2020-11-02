@@ -1,9 +1,9 @@
 package app
 
-import app.dto.AccessToken
+import app.dto.AccessTokenResponse
 import app.dto.IdResponse
-import app.dto.UserLogin
-import app.dto.UserRegistration
+import app.dto.UserLoginRequest
+import app.dto.UserRegistrationRequest
 import app.service.CompetitionCreatorService
 import app.service.UserService
 import io.ktor.application.*
@@ -17,14 +17,14 @@ import userPrincipal
 fun Routing.configureRoutes() {
 
     post("/register") {
-        val requestBody: UserRegistration = call.receive()
+        val requestBody: UserRegistrationRequest = call.receive()
         UserService.registerUser(requestBody)
         call.respond(HttpStatusCode.OK)
     }
 
     post("/login") {
-        val requestBody: UserLogin = call.receive()
-        val responseBody: AccessToken = UserService.getAccessToken(requestBody)
+        val requestBody: UserLoginRequest = call.receive()
+        val responseBody: AccessTokenResponse = UserService.getAccessToken(requestBody)
         call.respond(responseBody)
     }
 

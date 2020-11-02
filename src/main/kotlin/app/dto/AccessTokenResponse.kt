@@ -3,6 +3,6 @@ package app.dto
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class AccessToken(
+data class AccessTokenResponse(
     val accessToken: String
 )

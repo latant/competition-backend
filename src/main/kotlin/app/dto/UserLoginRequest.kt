@@ -3,8 +3,7 @@ package app.dto
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class UserRegistration(
-    val name: String,
+data class UserLoginRequest(
     val email: String,
     val password: String,
 )

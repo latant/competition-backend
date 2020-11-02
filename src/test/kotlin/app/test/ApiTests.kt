@@ -10,7 +10,7 @@ import java.time.ZonedDateTime
 
 class ApiTests {
 
-    private lateinit var accessToken: AccessToken
+    private lateinit var accessTokenResponse: AccessTokenResponse
 
     @Before
     fun init() {
@@ -19,36 +19,36 @@ class ApiTests {
         }
         withApp {
             handleRequest(HttpMethod.Post, "/register") {
-                jsonBody(UserRegistration(name = "Latinovits Antal", email = "latinovitsantal@gmail.com", password = "demo"))
+                jsonBody(UserRegistrationRequest(name = "Latinovits Antal", email = "latinovitsantal@gmail.com", password = "demo"))
             }
             handleRequest(HttpMethod.Post, "/login") {
-                jsonBody(UserLogin(email = "latinovitsantal@gmail.com", password = "demo"))
+                jsonBody(UserLoginRequest(email = "latinovitsantal@gmail.com", password = "demo"))
             }.run {
-                accessToken = responseBody()!!
+                accessTokenResponse = responseBody()!!
             }
         }
     }
 
     private fun TestApplicationRequest.authenticate() {
-        addHeader(HttpHeaders.Authorization, "Bearer ${accessToken.accessToken}")
+        addHeader(HttpHeaders.Authorization, "Bearer ${accessTokenResponse.accessToken}")
     }
 
     @Test
     fun testLeagueCreation() = withApp {
         handleRequest(HttpMethod.Post, "/competitions") {
             authenticate()
-            jsonBody<CompetitionCreation>(CompetitionCreation.League(
+            jsonBody<CompetitionCreationRequest>(CompetitionCreationRequest.League(
                 name = "My League",
                 dateTime = ZonedDateTime.now(),
                 participants = listOf(
-                    CompetitionCreation.Participant("Eagles"),
-                    CompetitionCreation.Participant("Lions"),
-                    CompetitionCreation.Participant("Bulls"),
-                    CompetitionCreation.Participant("Hornets"),
-                    CompetitionCreation.Participant("Wolves"),
-                    CompetitionCreation.Participant("Tigers"),
-                    CompetitionCreation.Participant("Hawks"),
-                    CompetitionCreation.Participant("Sharks"),
+                    CompetitionCreationRequest.Participant("Eagles"),
+                    CompetitionCreationRequest.Participant("Lions"),
+                    CompetitionCreationRequest.Participant("Bulls"),
+                    CompetitionCreationRequest.Participant("Hornets"),
+                    CompetitionCreationRequest.Participant("Wolves"),
+                    CompetitionCreationRequest.Participant("Tigers"),
+                    CompetitionCreationRequest.Participant("Hawks"),
+                    CompetitionCreationRequest.Participant("Sharks"),
                 )
             ))
         }.run {
@@ -60,18 +60,18 @@ class ApiTests {
     fun testCupCreation() = withApp {
         handleRequest(HttpMethod.Post, "/competitions") {
             authenticate()
-            jsonBody<CompetitionCreation>(CompetitionCreation.Cup(
+            jsonBody<CompetitionCreationRequest>(CompetitionCreationRequest.Cup(
                 name = "My Cup",
                 dateTime = ZonedDateTime.now(),
                 participants = listOf(
-                    CompetitionCreation.Participant("Eagles"),
-                    CompetitionCreation.Participant("Lions"),
-                    CompetitionCreation.Participant("Bulls"),
-                    CompetitionCreation.Participant("Hornets"),
-                    CompetitionCreation.Participant("Wolves"),
-                    CompetitionCreation.Participant("Tigers"),
-                    CompetitionCreation.Participant("Hawks"),
-                    CompetitionCreation.Participant("Sharks"),
+                    CompetitionCreationRequest.Participant("Eagles"),
+                    CompetitionCreationRequest.Participant("Lions"),
+                    CompetitionCreationRequest.Participant("Bulls"),
+                    CompetitionCreationRequest.Participant("Hornets"),
+                    CompetitionCreationRequest.Participant("Wolves"),
+                    CompetitionCreationRequest.Participant("Tigers"),
+                    CompetitionCreationRequest.Participant("Hawks"),
+                    CompetitionCreationRequest.Participant("Sharks"),
                 )
             ))
         }.run {
@@ -83,20 +83,20 @@ class ApiTests {
     fun testTournamentCreation() = withApp {
         handleRequest(HttpMethod.Post, "/competitions") {
             authenticate()
-            jsonBody<CompetitionCreation>(CompetitionCreation.Tournament(
+            jsonBody<CompetitionCreationRequest>(CompetitionCreationRequest.Tournament(
                 name = "My Tournament",
                 dateTime = ZonedDateTime.now(),
                 groupCount = 2,
                 playOffParticipantCount = 4,
                 participants = listOf(
-                    CompetitionCreation.Participant("Eagles"),
-                    CompetitionCreation.Participant("Lions"),
-                    CompetitionCreation.Participant("Bulls"),
-                    CompetitionCreation.Participant("Hornets"),
-                    CompetitionCreation.Participant("Wolves"),
-                    CompetitionCreation.Participant("Tigers"),
-                    CompetitionCreation.Participant("Hawks"),
-                    CompetitionCreation.Participant("Sharks"),
+                    CompetitionCreationRequest.Participant("Eagles"),
+                    CompetitionCreationRequest.Participant("Lions"),
+                    CompetitionCreationRequest.Participant("Bulls"),
+                    CompetitionCreationRequest.Participant("Hornets"),
+                    CompetitionCreationRequest.Participant("Wolves"),
+                    CompetitionCreationRequest.Participant("Tigers"),
+                    CompetitionCreationRequest.Participant("Hawks"),
+                    CompetitionCreationRequest.Participant("Sharks"),
                 )
             ))
         }.run {

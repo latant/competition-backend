@@ -25,8 +25,6 @@ dependencies {
     implementation(ktor("auth-jwt"))
     implementation(ktor("serialization"))
     testImplementation(ktor("server-test-host"))
-    implementation(ktor("html-builder"))
-    implementation(ktor("server-test-host"))
     implementation(ktor("client-cio"))
 
     implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.2")

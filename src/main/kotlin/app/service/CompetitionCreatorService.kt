@@ -1,17 +1,18 @@
 package app.service
 
 import app.dao.CompetitionGraph
-import app.dao.load
 import app.dto.CompetitionCreationRequest
 import app.model.*
 import app.security.UserPrincipal
 import atUTC
 import org.neo4j.ogm.session.Session
+import org.neo4j.ogm.session.load
 
 object CompetitionCreatorService {
 
     fun createCompetition(userPrincipal: UserPrincipal, competitionCreation: CompetitionCreationRequest): Long {
         return CompetitionGraph.readWriteTransaction {
+            this.load<User>(userPrincipal.id, 1)!!
             val user = load<User>(userPrincipal.id, 1)!!
             when (competitionCreation) {
                 is CompetitionCreationRequest.League -> createLeague(user, competitionCreation)

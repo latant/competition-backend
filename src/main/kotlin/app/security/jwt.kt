@@ -1,15 +1,15 @@
 package app.security
 
 import app.dao.CompetitionGraph
-import app.dao.load
 import app.model.User
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import io.ktor.auth.*
 import io.ktor.auth.jwt.*
+import org.neo4j.ogm.session.load
 import java.util.*
 
-private const val secret = "zAP5MBA4B4Ijz0MZaS48"
+private val secret: String = System.getenv("JWT_SECRET")
 private const val issuer = "competition-service"
 private const val validityMs = 36_000_00 * 10
 private val algorithm = Algorithm.HMAC512(secret)

@@ -73,7 +73,8 @@ object CompetitionCreatorService {
         val groupsStructure = CompetitionAlgorithmService
             .groupsWithCount(tournament.participants, tournamentCreation.groupCount)
             .map { it to CompetitionAlgorithmService.leagueScheduling(it.size) }
-        val groupStage = GroupStage(groupsStructure.maxOfOrNull { (_, sch) -> sch.size }!!).also { gs ->
+        val groupStageRoundCount = groupsStructure.maxOfOrNull { (_, sch) -> sch.size }!!
+        val groupStage = GroupStage(name = "Group stage", roundCount = groupStageRoundCount).also { gs ->
             gs.rounds = (1..gs.roundCount).map { Round("Group stage Round $it", it, "") }
             gs.groups = groupsStructure.mapIndexed { gi, (gps, gsch) ->
                 Group("Group ${gi + 1}", "").also { g ->
@@ -100,7 +101,8 @@ object CompetitionCreatorService {
         val playoffsFinalSource = CompetitionAlgorithmService
             .playOffs(groupsStructure.map { it.first }, tournamentCreation.playOffParticipantCount)
             as CompetitionAlgorithmService.PlayoffMatchSource.Match
-        val playoffsStage = PlayoffsStage(roundCount = playoffsFinalSource.roundOrdinal).also { pst ->
+        val playoffsStageRoundCount = playoffsFinalSource.roundOrdinal
+        val playoffsStage = PlayoffsStage(name = "Play-offs", roundCount = playoffsStageRoundCount).also { pst ->
             pst.rounds = (1..pst.roundCount).map { Round("Playoffs Round $it", it, "") }
         }
         tournament.stages = listOf(groupStage, playoffsStage)

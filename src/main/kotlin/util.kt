@@ -32,3 +32,7 @@ fun <E> Sequence<E>.repeatEveryNth(n: Int) = sequence {
 }
 
 val IntRange.length get() = last - first + 1
+
+fun String.toZonedDateTime(): ZonedDateTime = ZonedDateTime.parse(this)
+fun utcNow() = ZonedDateTime.now().atUTC()
+fun LocalDateTime.startOfDay(): LocalDateTime = withHour(0).withMinute(0).withSecond(0).withNano(0)

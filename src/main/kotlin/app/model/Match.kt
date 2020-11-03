@@ -18,12 +18,14 @@ class Match(
     @Relationship(EDITOR_OF_MATCH, direction = INCOMING)
     lateinit var editors: List<User>
 
-    @Relationship(MATCH_IN_ROUND, direction = INCOMING)
+    @Relationship(MATCH_IN_ROUND)
     lateinit var round: Round
 
     @Relationship(PARTICIPANT_IN_MATCH, direction = INCOMING)
     lateinit var participations: List<MatchParticipation>
 
+    @Relationship(MATCH_IN_GROUP)
+    val group: Group? = null
 
     enum class State {
         NOT_STARTED_YET,

@@ -6,6 +6,7 @@ import org.neo4j.ogm.annotation.Relationship
 @NodeEntity
 abstract class CompetitionStage : Entity() {
 
+    abstract val name: String?
     abstract val roundCount: Int
 
     @Relationship(STAGE_OF_COMPETITION)

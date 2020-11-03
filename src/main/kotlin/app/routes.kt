@@ -1,6 +1,7 @@
 package app
 
 import app.dto.*
+import app.error.RequestError
 import app.service.CompetitionCreatorService
 import app.service.CompetitionRetrievalService
 import app.service.MatchService
@@ -42,7 +43,7 @@ fun Routing.configureRoutes() {
             endDateTime != null -> endDateTime.minusDays(1) to endDateTime
             else -> utcNow().startOfDay().let { it to it.plusDays(1) }
         }
-        val responseBody = MatchService.getMatchesBetween(startTime, endTime)
+        val responseBody: List<MatchListElementResponse> = MatchService.getMatchesBetween(startTime, endTime)
         call.respond(responseBody)
     }
 
@@ -55,9 +56,7 @@ fun Routing.configureRoutes() {
             call.respond(responseBody)
         }
 
-        get("/competitions/{id}") {
 
-        }
 
         get("my-matches") {
 
@@ -67,7 +66,13 @@ fun Routing.configureRoutes() {
 
     authenticate(optional = true) {
 
-
+        get("/competitions/{id}") {
+            val competitionId = call.parameters["id"]!!.toLong()
+            val userPrincipal = call.userPrincipal
+            val responseBody: CompetitionResponse = CompetitionRetrievalService
+                .getCompetition(userPrincipal, competitionId)
+            call.respond(responseBody)
+        }
 
     }
 

@@ -7,10 +7,9 @@ import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
 
 @Serializable
-data class MatchResponse(
+data class MatchListElementResponse(
     val id: Long,
-    @Contextual
-    val dateTime: LocalDateTime,
+    val dateTime: @Contextual LocalDateTime,
     val state: Match.State,
     val participants: List<Participant>,
     val competition: Competition,
@@ -25,7 +24,7 @@ data class MatchResponse(
         // The participant is known
         @Serializable
         @SerialName("Fix")
-        data class FixParticipant(
+        data class Fix(
             val participantId: Long,
             val participantName: String,
             val score: Double?,
@@ -34,7 +33,7 @@ data class MatchResponse(
         // The participant is elected from a match, maybe known
         @Serializable
         @SerialName("ProceededFromMatch")
-        data class ProceededFromMatchParticipant(
+        data class ProceededFromMatch(
             val matchId: Long,
             val participantId: Long?,
             val participantName: String?,
@@ -44,7 +43,7 @@ data class MatchResponse(
         // The participant is elected by ending up on a place in a group
         @Serializable
         @SerialName("ProceededFromGroup")
-        data class ProceededFromGroupParticipant(
+        data class ProceededFromGroup(
             val groupId: Long,
             val groupName: String,
             val groupPlace: Int,

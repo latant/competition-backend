@@ -7,4 +7,8 @@ class User(
     val name: String,
     val email: String,
     val password: String,
-) : Entity()
+) : Entity() {
+
+    // Relationships are not referenced because of competition query performance reasons
+
+}

@@ -3,9 +3,12 @@ package app.test
 import app.configureApplication
 import app.serialization.JsonConfig
 import io.ktor.http.*
+import io.ktor.response.*
 import io.ktor.server.testing.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
+import java.net.URLEncoder
+import java.util.*
 
 fun withApp(action: TestApplicationEngine.() -> Unit) {
     withApplication {
@@ -19,4 +22,6 @@ inline fun <reified T: Any> TestApplicationRequest.jsonBody(value: T) {
     setBody(JsonConfig.json.encodeToString(value))
 }
 
-inline fun <reified T: Any> TestApplicationCall.responseBody() = response.content?.let { JsonConfig.json.decodeFromString<T>(it) }
+inline fun <reified T: Any> TestApplicationResponse.body() = content?.let { JsonConfig.json.decodeFromString<T>(it) }
+
+fun String.urlEncoded(): String = URLEncoder.encode(this, "UTF-8")

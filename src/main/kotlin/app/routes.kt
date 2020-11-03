@@ -2,6 +2,7 @@ package app
 
 import app.dto.*
 import app.error.RequestError
+import app.serialization.JsonConfig.json
 import app.service.CompetitionCreatorService
 import app.service.CompetitionRetrievalService
 import app.service.MatchService
@@ -13,10 +14,12 @@ import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
+import kotlinx.serialization.encodeToString
 import startOfDay
 import toZonedDateTime
 import userPrincipal
 import utcNow
+import java.time.LocalDateTime
 import java.time.ZonedDateTime
 
 fun Routing.configureRoutes() {
@@ -34,16 +37,8 @@ fun Routing.configureRoutes() {
     }
 
     get("/matches") {
-        val queryParams = call.request.queryParameters
-        val startDateTime = queryParams["startTime"]?.toZonedDateTime()?.atUTC()
-        val endDateTime = queryParams["endTime"]?.toZonedDateTime()?.atUTC()
-        val (startTime, endTime) = when {
-            startDateTime != null && endDateTime != null -> startDateTime to endDateTime
-            startDateTime != null -> startDateTime to startDateTime.plusDays(1)
-            endDateTime != null -> endDateTime.minusDays(1) to endDateTime
-            else -> utcNow().startOfDay().let { it to it.plusDays(1) }
-        }
-        val responseBody: List<MatchListElementResponse> = MatchService.getMatchesBetween(startTime, endTime)
+        val (startDateTime, endDateTime) = call.request.startDateTimeAndEndDateTimeLenientRequestParams()
+        val responseBody: List<MatchListElementResponse> = MatchService.getMatchesBetween(startDateTime, endDateTime)
         call.respond(responseBody)
     }
 
@@ -56,10 +51,11 @@ fun Routing.configureRoutes() {
             call.respond(responseBody)
         }
 
-
-
-        get("my-matches") {
-
+        get("/my-matches") {
+            val (startDateTime, endDateTime) = call.request.startDateTimeAndEndDateTimeLenientRequestParams()
+            val responseBody: List<MatchResponse> = MatchService
+                .getUsersMatchesBetween(startDateTime, endDateTime, call.userPrincipal!!)
+            call.respond(responseBody)
         }
 
     }
@@ -71,9 +67,21 @@ fun Routing.configureRoutes() {
             val userPrincipal = call.userPrincipal
             val responseBody: CompetitionResponse = CompetitionRetrievalService
                 .getCompetition(userPrincipal, competitionId)
-            call.respond(responseBody)
+            call.respond(json.encodeToString(responseBody))
         }
 
     }
 
+}
+
+
+fun ApplicationRequest.startDateTimeAndEndDateTimeLenientRequestParams(): Pair<LocalDateTime, LocalDateTime> {
+    val startDateTime = queryParameters["startDateTime"]?.toZonedDateTime()?.atUTC()
+    val endDateTime = queryParameters["endDateTime"]?.toZonedDateTime()?.atUTC()
+    return when {
+        startDateTime != null && endDateTime != null -> startDateTime to endDateTime
+        startDateTime != null -> startDateTime to startDateTime.plusDays(1)
+        endDateTime != null -> endDateTime.minusDays(1) to endDateTime
+        else -> utcNow().startOfDay().let { it to it.plusDays(1) }
+    }
 }

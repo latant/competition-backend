@@ -19,6 +19,7 @@ dependencies {
     fun ktor(module: String) = "io.ktor:ktor-$module:1.4.0"
 
     testImplementation(kotlin("test-junit"))
+    testImplementation("com.github.stefanbirkner:system-rules:1.19.0")
 
     implementation(ktor("server-netty"))
     implementation(ktor("html-builder"))

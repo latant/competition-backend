@@ -4,11 +4,21 @@ import app.dao.CompetitionGraph
 import app.dto.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
+import io.ktor.util.*
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
+import org.junit.contrib.java.lang.system.EnvironmentVariables
 import java.time.ZonedDateTime
+import java.util.*
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
 class ApiTests {
+
+    @Rule
+    fun environmentVariables(): EnvironmentVariables = EnvironmentVariables()
+        .set("JWT_SECRET", "sfdsafsadfdsa32r432f")
 
     private lateinit var accessTokenResponse: AccessTokenResponse
 
@@ -24,7 +34,7 @@ class ApiTests {
             handleRequest(HttpMethod.Post, "/login") {
                 jsonBody(UserLoginRequest(email = "latinovitsantal@gmail.com", password = "demo"))
             }.run {
-                accessTokenResponse = responseBody()!!
+                accessTokenResponse = response.body()!!
             }
         }
     }
@@ -35,7 +45,7 @@ class ApiTests {
 
     @Test
     fun testLeagueCreation() = withApp {
-        handleRequest(HttpMethod.Post, "/competitions") {
+        val postResponse = handleRequest(HttpMethod.Post, "/competitions") {
             authenticate()
             jsonBody<CompetitionCreationRequest>(CompetitionCreationRequest.League(
                 name = "My League",
@@ -51,14 +61,18 @@ class ApiTests {
                     CompetitionCreationRequest.Participant("Sharks"),
                 )
             ))
-        }.run {
-            assert(responseBody<IdResponse>() != null)
-        }
+        }.response
+        assertEquals(HttpStatusCode.OK, postResponse.status())
+        val idResponse = postResponse.body<IdResponse>().also(::assertNotNull)!!
+        val getResponse = handleRequest(HttpMethod.Get, "/competitions/${idResponse.id}").response
+        assertEquals(HttpStatusCode.OK, getResponse.status())
+        assertNotNull(getResponse.body<CompetitionResponse>())
+        assert(getResponse.body<CompetitionResponse>() is CompetitionResponse.League)
     }
 
     @Test
     fun testCupCreation() = withApp {
-        handleRequest(HttpMethod.Post, "/competitions") {
+        val postResponse = handleRequest(HttpMethod.Post, "/competitions") {
             authenticate()
             jsonBody<CompetitionCreationRequest>(CompetitionCreationRequest.Cup(
                 name = "My Cup",
@@ -74,14 +88,18 @@ class ApiTests {
                     CompetitionCreationRequest.Participant("Sharks"),
                 )
             ))
-        }.run {
-            assert(responseBody<IdResponse>() != null)
-        }
+        }.response
+        assertEquals(HttpStatusCode.OK, postResponse.status())
+        val idResponse = postResponse.body<IdResponse>().also(::assertNotNull)!!
+        val getResponse = handleRequest(HttpMethod.Get, "/competitions/${idResponse.id}").response
+        assertEquals(HttpStatusCode.OK, getResponse.status())
+        assertNotNull(getResponse.body<CompetitionResponse>())
+        assert(getResponse.body<CompetitionResponse>() is CompetitionResponse.Cup)
     }
 
     @Test
     fun testTournamentCreation() = withApp {
-        handleRequest(HttpMethod.Post, "/competitions") {
+        val postResponse = handleRequest(HttpMethod.Post, "/competitions") {
             authenticate()
             jsonBody<CompetitionCreationRequest>(CompetitionCreationRequest.Tournament(
                 name = "My Tournament",
@@ -99,16 +117,37 @@ class ApiTests {
                     CompetitionCreationRequest.Participant("Sharks"),
                 )
             ))
-        }.run {
-            assert(responseBody<IdResponse>() != null)
-        }
+        }.response
+        assertEquals(HttpStatusCode.OK, postResponse.status())
+        val idResponse = postResponse.body<IdResponse>().also(::assertNotNull)!!
+        val getResponse = handleRequest(HttpMethod.Get, "/competitions/${idResponse.id}").response
+        assertEquals(HttpStatusCode.OK, getResponse.status())
+        assertNotNull(getResponse.body<CompetitionResponse>())
+        assert(getResponse.body<CompetitionResponse>() is CompetitionResponse.Tournament)
     }
 
     @Test
-    fun testCompetitionCreations() {
+    fun testAllMatches() = withApp {
         testLeagueCreation()
         testCupCreation()
         testTournamentCreation()
+        val getResponse = handleRequest(HttpMethod.Get,
+            "/matches?startDateTime=${ZonedDateTime.now().minusHours(1).toString().urlEncoded()}").response
+        assertEquals(HttpStatusCode.OK, getResponse.status())
+        assertNotNull(getResponse.body<List<MatchListElementResponse>>())
+        assertEquals(28 + 7 + ((6 * 2) + 3), getResponse.body<List<MatchListElementResponse>>()!!.size)
+    }
+
+    @Test
+    fun testMyMatches() = withApp {
+        testAllMatches()
+        val getResponse = handleRequest(HttpMethod.Get,
+            "/my-matches?startDateTime=${ZonedDateTime.now().minusHours(1).toString().urlEncoded()}") {
+            authenticate()
+        }.response
+        assertEquals(HttpStatusCode.OK, getResponse.status())
+        assertNotNull(getResponse.body<List<MatchResponse>>())
+        assertEquals(28 + 7 + ((6 * 2) + 3), getResponse.body<List<MatchResponse>>()!!.size)
     }
 
 }

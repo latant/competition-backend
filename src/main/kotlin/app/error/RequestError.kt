@@ -10,6 +10,7 @@ enum class RequestError(val statusCode: HttpStatusCode, val message: String = ""
     EmailAlreadyUsed(BadRequest),
     InvalidUsernameOrPassword(Unauthorized),
     CompetitionNotFound(NotFound),
+    MatchNotFound(NotFound),
 
     ;
 

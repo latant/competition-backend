@@ -4,13 +4,11 @@ import app.dao.CompetitionGraph
 import app.dto.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
-import io.ktor.util.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.contrib.java.lang.system.EnvironmentVariables
 import java.time.ZonedDateTime
-import java.util.*
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
@@ -131,11 +129,19 @@ class ApiTests {
         testLeagueCreation()
         testCupCreation()
         testTournamentCreation()
-        val getResponse = handleRequest(HttpMethod.Get,
+        val getMatchesResponse = handleRequest(HttpMethod.Get,
             "/matches?startDateTime=${ZonedDateTime.now().minusHours(1).toString().urlEncoded()}").response
-        assertEquals(HttpStatusCode.OK, getResponse.status())
-        assertNotNull(getResponse.body<List<MatchListElementResponse>>())
-        assertEquals(28 + 7 + ((6 * 2) + 3), getResponse.body<List<MatchListElementResponse>>()!!.size)
+        assertEquals(HttpStatusCode.OK, getMatchesResponse.status())
+        assertNotNull(getMatchesResponse.body<List<MatchListElementResponse>>())
+        assertEquals(28 + 7 + ((6 * 2) + 3), getMatchesResponse.body<List<MatchListElementResponse>>()!!.size)
+
+        val matchIds = getMatchesResponse.body<List<MatchListElementResponse>>()!!.map { it.id }
+        matchIds.map { matchId ->
+            val getMatchResponse = handleRequest(HttpMethod.Get, "/matches/$matchId").response
+            assertEquals(HttpStatusCode.OK, getMatchResponse.status())
+            assertNotNull(getMatchResponse.body<MatchResponse>())
+            assertEquals(MatchResponse.EditPermission.NONE, getMatchResponse.body<MatchResponse>()!!.editPermission)
+        }
     }
 
     @Test
@@ -146,8 +152,8 @@ class ApiTests {
             authenticate()
         }.response
         assertEquals(HttpStatusCode.OK, getResponse.status())
-        assertNotNull(getResponse.body<List<MatchResponse>>())
-        assertEquals(28 + 7 + ((6 * 2) + 3), getResponse.body<List<MatchResponse>>()!!.size)
+        assertNotNull(getResponse.body<List<MatchListElementResponse>>())
+        assertEquals(28 + 7 + ((6 * 2) + 3), getResponse.body<List<MatchListElementResponse>>()!!.size)
     }
 
 }

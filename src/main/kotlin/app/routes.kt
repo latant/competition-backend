@@ -1,11 +1,10 @@
 package app
 
 import app.dto.*
-import app.error.RequestError
 import app.serialization.JsonConfig.json
 import app.service.CompetitionCreatorService
 import app.service.CompetitionRetrievalService
-import app.service.MatchService
+import app.service.MatchRetrievalService
 import app.service.UserService
 import atUTC
 import io.ktor.application.*
@@ -14,13 +13,13 @@ import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
+import io.ktor.websocket.*
 import kotlinx.serialization.encodeToString
 import startOfDay
 import toZonedDateTime
 import userPrincipal
 import utcNow
 import java.time.LocalDateTime
-import java.time.ZonedDateTime
 
 fun Routing.configureRoutes() {
 
@@ -38,8 +37,40 @@ fun Routing.configureRoutes() {
 
     get("/matches") {
         val (startDateTime, endDateTime) = call.request.startDateTimeAndEndDateTimeLenientRequestParams()
-        val responseBody: List<MatchListElementResponse> = MatchService.getMatchesBetween(startDateTime, endDateTime)
+        val responseBody: List<MatchListElementResponse> = MatchRetrievalService.getMatchesBetween(startDateTime, endDateTime)
         call.respond(responseBody)
+    }
+
+    get("/matches/{id}/stream-view") {
+
+    }
+
+    webSocket("/matches/{id}") {
+
+    }
+
+    get("/competitions/{id}/matches-stream-view") {
+
+    }
+
+    webSocket("/competitions/{id}/matches") {
+
+    }
+
+    get("/competitions/{id}/standings-stream-view") {
+
+    }
+
+    webSocket("/competitions/{id}/standings") {
+
+    }
+
+    get("/groups/{id}/stream-view") {
+
+    }
+
+    webSocket("/groups/{id}") {
+
     }
 
     authenticate {
@@ -53,9 +84,26 @@ fun Routing.configureRoutes() {
 
         get("/my-matches") {
             val (startDateTime, endDateTime) = call.request.startDateTimeAndEndDateTimeLenientRequestParams()
-            val responseBody: List<MatchResponse> = MatchService
-                .getUsersMatchesBetween(startDateTime, endDateTime, call.userPrincipal!!)
+            val userPrincipal = call.userPrincipal!!
+            val responseBody: List<MatchListElementResponse> = MatchRetrievalService
+                .getUsersMatchesBetween(startDateTime, endDateTime, userPrincipal)
             call.respond(responseBody)
+        }
+
+        patch("/competitions/{id}") {
+
+        }
+
+        patch("matches/{id}") {
+
+        }
+
+        post("matches/{id}/editors") {
+
+        }
+
+        delete("matches/{id}/editors/{email}") {
+
         }
 
     }
@@ -68,6 +116,13 @@ fun Routing.configureRoutes() {
             val responseBody: CompetitionResponse = CompetitionRetrievalService
                 .getCompetition(userPrincipal, competitionId)
             call.respond(json.encodeToString(responseBody))
+        }
+
+        get("/matches/{id}") {
+            val matchId = call.parameters["id"]!!.toLong()
+            val userPrincipal = call.userPrincipal
+            val responseBody: MatchResponse = MatchRetrievalService.getMatch(matchId, userPrincipal)
+            call.respond(responseBody)
         }
 
     }

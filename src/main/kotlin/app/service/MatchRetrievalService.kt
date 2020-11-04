@@ -3,31 +3,27 @@ package app.service
 import app.dao.CompetitionGraph
 import app.dto.MatchListElementResponse
 import app.dto.MatchResponse
+import app.error.RequestError
 import app.model.*
 import app.security.UserPrincipal
+import app.service.MatchRetrievalService.toMatchListElementCompetitionDTO
+import app.service.MatchRetrievalService.toMatchListElementGroupDTO
+import app.service.MatchRetrievalService.toMatchListElementParticipantDTO
+import app.service.MatchRetrievalService.toMatchListElementRoundDTO
 import org.neo4j.ogm.cypher.ComparisonOperator
 import org.neo4j.ogm.cypher.Filter
 import org.neo4j.ogm.cypher.Filters
+import org.neo4j.ogm.session.load
 import org.neo4j.ogm.session.loadAll
 import java.time.LocalDateTime
 
-object MatchService {
+object MatchRetrievalService {
 
     fun getMatchesBetween(startDateTime: LocalDateTime, endDateTime: LocalDateTime): List<MatchListElementResponse> {
         CompetitionGraph.session {
             val filter = matchDateTimeBetweenFilter(startDateTime, endDateTime)
             val matches = loadAll<Match>(filter, depth = 2).sortedBy { it.dateTime }
-            return matches.map { m ->
-                MatchListElementResponse(
-                    id = m.id!!,
-                    dateTime = m.dateTime,
-                    state = m.state,
-                    participants = m.participations.map { it.toMatchListElementParticipantDTO() },
-                    competition = m.competition.toMatchListElementCompetitionDTO(),
-                    round = m.round.toMatchListElementRoundDTO(),
-                    group = m.group?.toMatchListElementGroupDTO(),
-                )
-            }
+            return matches.map { it.toMatchListElementDTO() }
         }
     }
 
@@ -35,25 +31,22 @@ object MatchService {
         startDateTime: LocalDateTime,
         endDateTime: LocalDateTime,
         userPrincipal: UserPrincipal
-    ): List<MatchResponse> {
+    ): List<MatchListElementResponse> {
         CompetitionGraph.session {
             val filter = matchDateTimeBetweenFilter(startDateTime, endDateTime)
-            val matchesWithPermissions = loadAll<Match>(filter, depth = 2)
-                .map { it to it.editPermissionForUserWithId(userPrincipal.id) }
-                .sortedBy { (m) -> m.dateTime }
-            return matchesWithPermissions.map { (m, p) ->
-                MatchResponse(
-                    id = m.id!!,
-                    dateTime = m.dateTime,
-                    description = m.description,
-                    state = m.state,
-                    editPermission = p,
-                    participants = m.participations.map { it.toMatchParticipantDTO() },
-                    competition = m.competition.toMatchCompetitionDTO(),
-                    round = m.round.toMatchRoundDTO(),
-                    group = m.group?.toMatchGroupDTO()
-                )
-            }
+            val matches = loadAll<Match>(filter, depth = 2)
+                .filter { it.editPermissionForUserWithId(userPrincipal.id) !== MatchResponse.EditPermission.NONE }
+                .sortedBy { it.dateTime }
+            return matches.map { it.toMatchListElementDTO() }
+        }
+    }
+
+    fun getMatch(matchId: Long, userPrincipal: UserPrincipal?): MatchResponse {
+        CompetitionGraph.session {
+            val match = load<Match>(matchId, depth = 2) ?: RequestError.MatchNotFound()
+            val editPermission = userPrincipal?.let { match.editPermissionForUserWithId(it.id) }
+                ?: MatchResponse.EditPermission.NONE
+            return match.toMatchDTO(editPermission)
         }
     }
 
@@ -62,6 +55,16 @@ object MatchService {
         val endDateTimeFilter = Filter(Match::dateTime.name, ComparisonOperator.LESS_THAN_EQUAL, endDateTime)
         return startDateTimeFilter.and(endDateTimeFilter)
     }
+
+    private fun Match.toMatchListElementDTO() = MatchListElementResponse(
+        id = id!!,
+        dateTime = dateTime,
+        state = state,
+        participants = participations.map { it.toMatchListElementParticipantDTO() },
+        competition = competition.toMatchListElementCompetitionDTO(),
+        round = round.toMatchListElementRoundDTO(),
+        group = group?.toMatchListElementGroupDTO(),
+    )
 
     private fun MatchParticipation.toMatchListElementParticipantDTO(): MatchListElementResponse.Participant {
         return when (val p = participant) {
@@ -104,6 +107,19 @@ object MatchService {
             else -> MatchResponse.EditPermission.NONE
         }
     }
+
+
+    private fun Match.toMatchDTO(editPermission: MatchResponse.EditPermission) = MatchResponse(
+        id = id!!,
+        dateTime = dateTime,
+        description = description,
+        state = state,
+        editPermission = editPermission,
+        participants = participations.map { it.toMatchParticipantDTO() },
+        competition = competition.toMatchCompetitionDTO(),
+        round = round.toMatchRoundDTO(),
+        group = group?.toMatchGroupDTO()
+    )
 
     private fun MatchParticipation.toMatchParticipantDTO(): MatchResponse.Participant {
         return when (val p = participant) {

@@ -9,9 +9,11 @@ import io.ktor.auth.jwt.*
 import io.ktor.features.*
 import io.ktor.routing.*
 import io.ktor.serialization.*
+import io.ktor.websocket.*
 
 fun Application.configureApplication() {
 
+    install(WebSockets)
     install(StatusPages) { configureStatusPages() }
     install(DefaultHeaders)
     install(CallLogging)

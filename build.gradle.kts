@@ -27,6 +27,7 @@ dependencies {
     implementation(ktor("serialization"))
     testImplementation(ktor("server-test-host"))
     implementation(ktor("client-cio"))
+    implementation(ktor("websockets"))
 
     implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.2")
 

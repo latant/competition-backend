@@ -35,7 +35,7 @@ object MatchRetrievalService {
         CompetitionGraph.session {
             val filter = matchDateTimeBetweenFilter(startDateTime, endDateTime)
             val matches = loadAll<Match>(filter, depth = 2)
-                .filter { it.editPermissionForUserWithId(userPrincipal.id) !== MatchResponse.EditPermission.NONE }
+                .filter { it.editPermissionForUserWithId(userPrincipal.id) != MatchResponse.EditPermission.NONE }
                 .sortedBy { it.dateTime }
             return matches.map { it.toMatchListElementDTO() }
         }
@@ -103,7 +103,7 @@ object MatchRetrievalService {
     private fun Match.editPermissionForUserWithId(userId: Long): MatchResponse.EditPermission {
         return when {
             competition.creator.id == userId -> MatchResponse.EditPermission.FULL
-            editors.any { it.id == userId } -> MatchResponse.EditPermission.BASIC
+            editors?.any { it.id == userId } ?: false -> MatchResponse.EditPermission.BASIC
             else -> MatchResponse.EditPermission.NONE
         }
     }

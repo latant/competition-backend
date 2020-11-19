@@ -8,11 +8,11 @@ import java.time.LocalDateTime
 @NodeEntity
 abstract class Competition : Entity() {
 
-    abstract val name: String
-    abstract val description: String
-    abstract val logo: ByteArray?
-    abstract val dateTime: LocalDateTime
-    abstract val displayColor: String
+    abstract var name: String
+    abstract var description: String
+    abstract var logo: String?
+    abstract var dateTime: LocalDateTime
+    abstract var displayColor: String
     abstract val participantCount: Int
 
     val state = State.NOT_STARTED_YET

@@ -2,14 +2,12 @@ package app
 
 import app.dto.*
 import app.serialization.JsonConfig.json
-import app.service.CompetitionCreatorService
-import app.service.CompetitionRetrievalService
-import app.service.MatchRetrievalService
-import app.service.UserService
+import app.service.*
 import atUTC
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.http.*
+import io.ktor.http.HttpStatusCode.Companion.OK
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
@@ -26,7 +24,7 @@ fun Routing.configureRoutes() {
     post("/register") {
         val requestBody: UserRegistrationRequest = call.receive()
         UserService.registerUser(requestBody)
-        call.respond(HttpStatusCode.OK)
+        call.respond(OK)
     }
 
     post("/login") {
@@ -91,7 +89,11 @@ fun Routing.configureRoutes() {
         }
 
         patch("/competitions/{id}") {
-
+            val id = call.parameters["id"]!!.toLong()
+            val userPrincipal = call.userPrincipal!!
+            val requestBody: CompetitionUpdateRequest = call.receive()
+            CompetitionEditorService.updateCompetition(id, requestBody, userPrincipal)
+            call.respond(OK)
         }
 
         patch("matches/{id}") {

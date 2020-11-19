@@ -10,11 +10,9 @@ import kotlinx.serialization.encodeToString
 import java.net.URLEncoder
 import java.util.*
 
-fun withApp(action: TestApplicationEngine.() -> Unit) {
-    withApplication {
-        application.configureApplication()
-        action()
-    }
+fun <T> withApp(action: TestApplicationEngine.() -> T): T = withApplication {
+    application.configureApplication()
+    action()
 }
 
 inline fun <reified T: Any> TestApplicationRequest.jsonBody(value: T) {

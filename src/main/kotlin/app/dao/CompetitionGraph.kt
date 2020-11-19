@@ -25,7 +25,7 @@ object CompetitionGraph {
                 return result
             } catch (e: Throwable) {
                 transaction.rollback()
-                throw Exception("Transaction rollback").apply { addSuppressed(e) }
+                throw e
             }
         }
     }

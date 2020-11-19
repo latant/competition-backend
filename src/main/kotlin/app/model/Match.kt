@@ -17,7 +17,7 @@ class Match(
     lateinit var competition: Competition
 
     @Relationship(EDITOR_OF_MATCH, direction = INCOMING)
-    lateinit var editors: List<User>
+    var editors: List<User>? = null
 
     @Relationship(MATCH_IN_ROUND)
     lateinit var round: Round

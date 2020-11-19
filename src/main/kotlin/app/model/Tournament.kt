@@ -5,11 +5,11 @@ import java.time.LocalDateTime
 
 @NodeEntity
 class Tournament(
-    override val name: String,
-    override val description: String,
-    override val logo: ByteArray?,
-    override val dateTime: LocalDateTime,
-    override val displayColor: String,
+    override var name: String,
+    override var description: String,
+    override var logo: String?,
+    override var dateTime: LocalDateTime,
+    override var displayColor: String,
     override val participantCount: Int
 ) : Competition() {
 

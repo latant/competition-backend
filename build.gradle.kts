@@ -30,8 +30,6 @@ dependencies {
     implementation(ktor("client-cio"))
     implementation(ktor("websockets"))
 
-    implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.2")
-
     implementation("org.neo4j:neo4j-ogm-core:3.2.17")
     runtimeOnly("org.neo4j:neo4j-ogm-bolt-driver:3.2.17")
     implementation("org.mindrot:jbcrypt:0.4")

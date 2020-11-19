@@ -18,7 +18,7 @@ object CompetitionGraph {
 
     inline fun <R> transaction(type: Transaction.Type, action: Session.() -> R): R {
         session {
-            val transaction = beginTransaction()
+            val transaction = beginTransaction(type)
             try {
                 val result = action()
                 transaction.commit()

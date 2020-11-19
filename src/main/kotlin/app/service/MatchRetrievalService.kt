@@ -67,27 +67,27 @@ object MatchRetrievalService {
     )
 
     private fun MatchParticipation.toMatchListElementParticipantDTO(): MatchListElementResponse.Participant {
-        return when (val p = participant) {
-            is FixMatchParticipant -> MatchListElementResponse.Participant.Fix(
-                participantId = p.competitionParticipant!!.id!!,
-                participantName = p.competitionParticipant!!.name,
+        return when (this) {
+            is FixMatchParticipation -> MatchListElementResponse.Participant.Fix(
+                participantId = competitionParticipant!!.id!!,
+                participantName = competitionParticipant!!.name,
                 score = score,
             )
-            is ProceededMatchParticipant -> MatchListElementResponse.Participant.ProceededFromMatch(
-                participantId = p.competitionParticipant?.id,
-                participantName = p.competitionParticipant?.name,
+            is ProceededMatchParticipation -> MatchListElementResponse.Participant.ProceededFromMatch(
+                participantId = competitionParticipant?.id,
+                participantName = competitionParticipant?.name,
                 score = score,
-                matchId = p.matchToWin.id!!,
+                matchId = matchToWin.id!!,
             )
-            is PlayoffsQuoteMatchParticipant -> MatchListElementResponse.Participant.ProceededFromGroup(
-                participantId = p.competitionParticipant?.id,
-                participantName = p.competitionParticipant?.name,
+            is PlayoffsQuoteMatchParticipation -> MatchListElementResponse.Participant.ProceededFromGroup(
+                participantId = competitionParticipant?.id,
+                participantName = competitionParticipant?.name,
                 score = score,
-                groupId = p.group.id!!,
-                groupName = p.group.name,
-                groupPlace = p.place
+                groupId = group.id!!,
+                groupName = group.name,
+                groupPlace = groupPlace
             )
-            else -> error("Unknown match participant type: ${p::class.qualifiedName}")
+            else -> error("Unknown match participant type: ${this::class.qualifiedName}")
         }
     }
 
@@ -122,27 +122,27 @@ object MatchRetrievalService {
     )
 
     private fun MatchParticipation.toMatchParticipantDTO(): MatchResponse.Participant {
-        return when (val p = participant) {
-            is FixMatchParticipant -> MatchResponse.Participant.Fix(
-                participantId = p.competitionParticipant!!.id!!,
-                participantName = p.competitionParticipant!!.name,
+        return when (this) {
+            is FixMatchParticipation -> MatchResponse.Participant.Fix(
+                participantId = competitionParticipant!!.id!!,
+                participantName = competitionParticipant!!.name,
                 score = score,
             )
-            is ProceededMatchParticipant -> MatchResponse.Participant.ProceededFromMatch(
-                participantId = p.competitionParticipant?.id,
-                participantName = p.competitionParticipant?.name,
+            is ProceededMatchParticipation -> MatchResponse.Participant.ProceededFromMatch(
+                participantId = competitionParticipant?.id,
+                participantName = competitionParticipant?.name,
                 score = score,
-                matchId = p.matchToWin.id!!,
+                matchId = matchToWin.id!!,
             )
-            is PlayoffsQuoteMatchParticipant -> MatchResponse.Participant.ProceededFromGroup(
-                participantId = p.competitionParticipant?.id,
-                participantName = p.competitionParticipant?.name,
+            is PlayoffsQuoteMatchParticipation -> MatchResponse.Participant.ProceededFromGroup(
+                participantId = competitionParticipant?.id,
+                participantName = competitionParticipant?.name,
                 score = score,
-                groupId = p.group.id!!,
-                groupName = p.group.name,
-                groupPlace = p.place
+                groupId = group.id!!,
+                groupName = group.name,
+                groupPlace = groupPlace
             )
-            else -> error("Unknown match participant type: ${p::class.qualifiedName}")
+            else -> error("Unknown match participant type: ${this::class.qualifiedName}")
         }
     }
 

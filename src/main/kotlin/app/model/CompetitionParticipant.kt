@@ -7,12 +7,12 @@ import org.neo4j.ogm.annotation.Relationship
 class CompetitionParticipant(
     val name: String,
     val description: String,
-) : MatchParticipant() {
+) : Entity() {
 
     @Relationship(PARTICIPANT_IN_COMPETITION)
     lateinit var competition: Competition
 
-    @Relationship(IS_MATCH_PARTICIPANT)
-    lateinit var matchParticipants: List<MatchParticipant>
+    @Relationship(PARTICIPATE_IN_MATCH_PARTICIPATION)
+    lateinit var matchParticipations: List<MatchParticipation>
 
 }

@@ -4,7 +4,9 @@ import org.neo4j.ogm.annotation.GeneratedValue
 import org.neo4j.ogm.annotation.Id
 
 abstract class Entity {
-    @Id @GeneratedValue
+
+    @Id
+    @GeneratedValue
     val id: Long? = null
 
     override fun equals(other: Any?): Boolean {

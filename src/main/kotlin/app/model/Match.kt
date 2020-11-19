@@ -2,6 +2,7 @@ package app.model
 
 import org.neo4j.ogm.annotation.NodeEntity
 import org.neo4j.ogm.annotation.Relationship
+import org.neo4j.ogm.annotation.Relationship.INCOMING
 import java.time.LocalDateTime
 
 @NodeEntity
@@ -21,7 +22,7 @@ class Match(
     @Relationship(MATCH_IN_ROUND)
     lateinit var round: Round
 
-    @Relationship(PARTICIPANT_IN_MATCH, direction = INCOMING)
+    @Relationship(PARTICIPATION_IN_MATCH, direction = INCOMING)
     lateinit var participations: List<MatchParticipation>
 
     @Relationship(MATCH_IN_GROUP)

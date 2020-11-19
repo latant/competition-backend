@@ -53,23 +53,23 @@ object CompetitionRetrievalService {
     )
 
     private fun MatchParticipation.toMatchParticipantDTO(): CompetitionResponse.Match.Participant {
-        return when(val p = participant) {
-            is FixMatchParticipant -> CompetitionResponse.Match.Participant.Fix(
-                participantId = p.competitionParticipant!!.id!!,
+        return when(this) {
+            is FixMatchParticipation -> CompetitionResponse.Match.Participant.Fix(
+                participantId = competitionParticipant!!.id!!,
                 score = score,
             )
-            is ProceededMatchParticipant -> CompetitionResponse.Match.Participant.ProceededFromMatch(
-                participantId = p.competitionParticipant?.id,
+            is ProceededMatchParticipation -> CompetitionResponse.Match.Participant.ProceededFromMatch(
+                participantId = competitionParticipant?.id,
                 score = score,
-                matchId = p.matchToWin.id!!,
+                matchId = matchToWin.id!!,
             )
-            is PlayoffsQuoteMatchParticipant -> CompetitionResponse.Match.Participant.ProceededFromGroup(
-                participantId = p.competitionParticipant?.id,
+            is PlayoffsQuoteMatchParticipation -> CompetitionResponse.Match.Participant.ProceededFromGroup(
+                participantId = competitionParticipant?.id,
                 score = score,
-                groupId = p.group.id!!,
-                groupPlace = p.place
+                groupId = group.id!!,
+                groupPlace = groupPlace
             )
-            else -> error("Unknown match participant type: ${p::class.qualifiedName}")
+            else -> error("Unknown match participant type: ${this::class.qualifiedName}")
         }
     }
 

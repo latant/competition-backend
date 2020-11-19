@@ -1,19 +1,19 @@
 package app.model
 
-import org.neo4j.ogm.annotation.EndNode
-import org.neo4j.ogm.annotation.RelationshipEntity
-import org.neo4j.ogm.annotation.StartNode
+import org.neo4j.ogm.annotation.NodeEntity
+import org.neo4j.ogm.annotation.Relationship
+import org.neo4j.ogm.annotation.Relationship.INCOMING
 
-@RelationshipEntity(PARTICIPANT_IN_MATCH)
-class MatchParticipation : Entity() {
+@NodeEntity
+abstract class MatchParticipation : Entity() {
 
     val score: Double? = null
     val place: Int? = null
 
-    @StartNode
-    lateinit var participant: MatchParticipant
-
-    @EndNode
+    @Relationship(PARTICIPATION_IN_MATCH)
     lateinit var match: Match
+
+    @Relationship(PARTICIPATE_IN_MATCH_PARTICIPATION, direction = INCOMING)
+    var competitionParticipant: CompetitionParticipant? = null
 
 }

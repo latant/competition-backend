@@ -2,6 +2,7 @@ package app.model
 
 import org.neo4j.ogm.annotation.NodeEntity
 import org.neo4j.ogm.annotation.Relationship
+import org.neo4j.ogm.annotation.Relationship.INCOMING
 
 @NodeEntity
 class Group(val name: String, val description: String) : Entity() {
@@ -16,6 +17,6 @@ class Group(val name: String, val description: String) : Entity() {
     lateinit var groupStage: GroupStage
 
     @Relationship(PLAYOFFS_QUOTE_FOR_GROUP, direction = INCOMING)
-    lateinit var playoffsQuotes: List<PlayoffsQuoteMatchParticipant>
+    lateinit var playoffsQuotes: List<PlayoffsQuoteMatchParticipation>
 
 }

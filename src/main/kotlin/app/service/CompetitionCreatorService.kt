@@ -36,11 +36,8 @@ object CompetitionCreatorService {
                     Match(league.dateTime, "").also { m ->
                         m.competition = league
                         m.participations = listOf(a, b).map { pi ->
-                            MatchParticipation().also { p ->
-                                p.match = m
-                                p.participant = FixMatchParticipant().also { fmp ->
-                                    fmp.competitionParticipant = participantsShuffled[pi]
-                                }
+                            FixMatchParticipation().also { fmp ->
+                                fmp.competitionParticipant = participantsShuffled[pi]
                             }
                         }
                     }
@@ -85,11 +82,8 @@ object CompetitionCreatorService {
                                 m.competition = tournament
                                 m.round = gs.rounds[ri]
                                 m.participations = listOf(a, b).map { pi ->
-                                    MatchParticipation().also { mp ->
-                                        mp.match = m
-                                        mp.participant = FixMatchParticipant().also { fmp ->
-                                            fmp.competitionParticipant = tournament.participants[pi]
-                                        }
+                                    FixMatchParticipation().also { fmp ->
+                                        fmp.competitionParticipant = tournament.participants[pi]
                                     }
                                 }
                             }
@@ -145,23 +139,20 @@ object CompetitionCreatorService {
             m.round = cup.stage.rounds[cupMatchSource.roundOrdinal - 1]
             m.competition = cup
             m.participations = listOf(cupMatchSource.home, cupMatchSource.away).map { cms ->
-                MatchParticipation().also { mp ->
-                    mp.match = m
-                    mp.participant = participantOf(cms, cup)
-                }
+                participationOf(cms, cup)
             }
         }
     }
 
-    private fun participantOf(cupMatchSource: CompetitionAlgorithmService.CupMatchSource, cup: Cup): MatchParticipant {
+    private fun participationOf(cupMatchSource: CompetitionAlgorithmService.CupMatchSource, cup: Cup): MatchParticipation {
         return when (cupMatchSource) {
             is CompetitionAlgorithmService.CupMatchSource.Participant -> {
-                FixMatchParticipant().also { fmp ->
+                FixMatchParticipation().also { fmp ->
                     fmp.competitionParticipant = cup.participants[cupMatchSource.index]
                 }
             }
             is CompetitionAlgorithmService.CupMatchSource.Match -> {
-                ProceededMatchParticipant().also { pmp ->
+                ProceededMatchParticipation().also { pmp ->
                     pmp.matchToWin = createCupMatchOf(cupMatchSource, cup)
                 }
             }
@@ -173,23 +164,20 @@ object CompetitionCreatorService {
             m.round = tournament.playoffsStage.rounds[playoffMatchSource.roundOrdinal - 1]
             m.competition = tournament
             m.participations = listOf(playoffMatchSource.home, playoffMatchSource.away).map { pms ->
-                MatchParticipation().also { mp ->
-                    mp.match = m
-                    mp.participant = participantOf(pms, tournament)
-                }
+                participationOf(pms, tournament)
             }
         }
     }
 
-    private fun participantOf(playoffMatchSource: CompetitionAlgorithmService.PlayoffMatchSource, tournament: Tournament): MatchParticipant {
+    private fun participationOf(playoffMatchSource: CompetitionAlgorithmService.PlayoffMatchSource, tournament: Tournament): MatchParticipation {
         return when (playoffMatchSource) {
             is CompetitionAlgorithmService.PlayoffMatchSource.Quote -> playoffMatchSource.run {
-                PlayoffsQuoteMatchParticipant(place, value).also { pqmp ->
+                PlayoffsQuoteMatchParticipation(place, value).also { pqmp ->
                     pqmp.group = tournament.groupStage.groups[group.index]
                 }
             }
             is CompetitionAlgorithmService.PlayoffMatchSource.Match -> {
-                ProceededMatchParticipant().also { pmp ->
+                ProceededMatchParticipation().also { pmp ->
                     pmp.matchToWin = createPlayoffMatchOf(playoffMatchSource, tournament)
                 }
             }

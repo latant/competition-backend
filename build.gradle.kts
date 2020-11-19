@@ -20,6 +20,7 @@ dependencies {
 
     testImplementation(kotlin("test-junit"))
     testImplementation("com.github.stefanbirkner:system-rules:1.19.0")
+    testImplementation("com.github.javafaker:javafaker:1.0.2")
 
     implementation(ktor("server-netty"))
     implementation(ktor("html-builder"))

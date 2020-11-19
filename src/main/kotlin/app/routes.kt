@@ -105,11 +105,19 @@ fun Routing.configureRoutes() {
         }
 
         post("matches/{id}/editors") {
-
+            val id = call.parameters["id"]!!.toLong()
+            val userPrincipal = call.userPrincipal!!
+            val requestBody: MatchEditorAdditionRequest = call.receive()
+            MatchEditorService.addMatchEditor(id, requestBody, userPrincipal)
+            call.respond(OK)
         }
 
         delete("matches/{id}/editors/{email}") {
-
+            val id = call.parameters["id"]!!.toLong()
+            val editorEmail = call.parameters["email"]
+            val userPrincipal = call.userPrincipal!!
+            MatchEditorService.removeMatchEditor(id, editorEmail, userPrincipal)
+            call.respond(OK)
         }
 
     }

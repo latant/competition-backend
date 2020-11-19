@@ -8,12 +8,13 @@ import java.time.LocalDateTime
 
 // Response that contains all necessary data for displaying a page of a match
 @Serializable
-data class MatchResponse(
+data class MatchResponse constructor(
     val id: Long,
     val dateTime: @Contextual LocalDateTime,
     val description: String,
     val state: Match.State,
     val editPermission: EditPermission,
+    val editors: List<Editor>?,
     val participants: List<Participant>,
     val competition: Competition,
     val round: Round,
@@ -29,6 +30,9 @@ data class MatchResponse(
         // The user has no permission to edit any data regarding the match
         NONE,
     }
+
+    @Serializable
+    data class Editor(val email: String, val name: String)
 
     // A match participant which is maybe not known yet
     @Serializable

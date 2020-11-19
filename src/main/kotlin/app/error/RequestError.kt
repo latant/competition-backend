@@ -19,6 +19,7 @@ enum class RequestError(val statusCode: HttpStatusCode, val message: String = ""
     MatchScoreCannotBeModifiedForParticipantNotInMatch(BadRequest),
     MatchCannotBeEndedBeforeBeingStarted(BadRequest),
     MatchCannotBeRevivedFromEndedState(BadRequest),
+    InvalidMatchEditorEmail(BadRequest),
 
     ;
 

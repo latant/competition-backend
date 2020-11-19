@@ -3,6 +3,7 @@ package app.service
 import app.dao.CompetitionGraph
 import app.dto.MatchListElementResponse
 import app.dto.MatchResponse
+import app.dto.MatchResponse.EditPermission.NONE
 import app.error.RequestError
 import app.model.*
 import app.security.UserPrincipal
@@ -35,7 +36,7 @@ object MatchRetrievalService {
         CompetitionGraph.session {
             val filter = matchDateTimeBetweenFilter(startDateTime, endDateTime)
             val matches = loadAll<Match>(filter, depth = 2)
-                .filter { it.editPermissionForUserWithId(userPrincipal.id) != MatchResponse.EditPermission.NONE }
+                .filter { it.editPermissionForUserWithId(userPrincipal.id) != NONE }
                 .sortedBy { it.dateTime }
             return matches.map { it.toMatchListElementDTO() }
         }
@@ -45,7 +46,7 @@ object MatchRetrievalService {
         CompetitionGraph.session {
             val match = load<Match>(matchId, depth = 2) ?: RequestError.MatchNotFound()
             val editPermission = userPrincipal?.let { match.editPermissionForUserWithId(it.id) }
-                ?: MatchResponse.EditPermission.NONE
+                ?: NONE
             return match.toMatchDTO(editPermission)
         }
     }
@@ -110,11 +111,14 @@ object MatchRetrievalService {
         description = description,
         state = state,
         editPermission = editPermission,
+        editors = if (editPermission == NONE) null else editors?.map { it.toMatchEditorDTO() } ?: emptyList(),
         participants = participations.map { it.toMatchParticipantDTO() },
         competition = competition.toMatchCompetitionDTO(),
         round = round.toMatchRoundDTO(),
         group = group?.toMatchGroupDTO()
     )
+
+    private fun User.toMatchEditorDTO() = MatchResponse.Editor(email, name)
 
     private fun MatchParticipation.toMatchParticipantDTO(): MatchResponse.Participant {
         return when (this) {

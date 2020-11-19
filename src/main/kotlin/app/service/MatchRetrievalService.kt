@@ -101,13 +101,8 @@ object MatchRetrievalService {
 
 
     private fun Match.editPermissionForUserWithId(userId: Long): MatchResponse.EditPermission {
-        return when {
-            competition.creator.id == userId -> MatchResponse.EditPermission.FULL
-            editors?.any { it.id == userId } ?: false -> MatchResponse.EditPermission.BASIC
-            else -> MatchResponse.EditPermission.NONE
-        }
+        return MatchEditorService.editPermissionForUserWithId(this, userId)
     }
-
 
     private fun Match.toMatchDTO(editPermission: MatchResponse.EditPermission) = MatchResponse(
         id = id!!,

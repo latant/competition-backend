@@ -7,7 +7,7 @@ import org.neo4j.ogm.annotation.Relationship.INCOMING
 @NodeEntity
 abstract class MatchParticipation : Entity() {
 
-    val score: Double? = null
+    var score: Double? = null
     val place: Int? = null
 
     @Relationship(PARTICIPATION_IN_MATCH)

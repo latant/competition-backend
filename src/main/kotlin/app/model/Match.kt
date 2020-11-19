@@ -7,11 +7,11 @@ import java.time.LocalDateTime
 
 @NodeEntity
 class Match(
-    val dateTime: LocalDateTime,
-    val description: String,
+    var dateTime: LocalDateTime,
+    var description: String,
 ): Entity() {
 
-    val state = State.NOT_STARTED_YET
+    var state = State.NOT_STARTED_YET
 
     @Relationship(MATCH_IN_COMPETITION)
     lateinit var competition: Competition
@@ -31,7 +31,7 @@ class Match(
     enum class State {
         NOT_STARTED_YET,
         ONGOING,
-        ENDED
+        ENDED,
     }
 
 }

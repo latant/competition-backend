@@ -13,6 +13,12 @@ enum class RequestError(val statusCode: HttpStatusCode, val message: String = ""
     CompetitionNotFound(NotFound),
     MatchNotFound(NotFound),
     UserCannotEditCompetition(Forbidden),
+    UserCannotEditMatch(Forbidden),
+    UserCannotEditMatchDateTime(Forbidden),
+    MatchScoresCannotBeModifiedWhileUnknownParticipant(BadRequest),
+    MatchScoreCannotBeModifiedForParticipantNotInMatch(BadRequest),
+    MatchCannotBeEndedBeforeBeingStarted(BadRequest),
+    MatchCannotBeRevivedFromEndedState(BadRequest),
 
     ;
 

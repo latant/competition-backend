@@ -97,7 +97,11 @@ fun Routing.configureRoutes() {
         }
 
         patch("matches/{id}") {
-
+            val id = call.parameters["id"]!!.toLong()
+            val userPrincipal = call.userPrincipal!!
+            val requestBody: MatchUpdateRequest = call.receive()
+            MatchEditorService.updateMatch(id, requestBody, userPrincipal)
+            call.respond(OK)
         }
 
         post("matches/{id}/editors") {

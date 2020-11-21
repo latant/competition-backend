@@ -25,11 +25,11 @@ object CompetitionCreatorService {
     private fun Session.createLeague(creator: User, leagueCreation: CompetitionCreationRequest.League): Long {
         val league = leagueCreation.toNode()
         league.creator = creator
-        league.participants = leagueCreation.competitors.map { it.toNode() }
+        league.competitors = leagueCreation.competitors.map { it.toNode() }
         val scheduling = CompetitionAlgorithmService.leagueScheduling(league.participantCount).shuffled()
         league.stages = listOf(LeagueStage(scheduling.size))
             .let { s -> leagueCreation.roundCount?.let { s.take(it) } ?: s }
-        val participantsShuffled = league.participants.shuffled()
+        val participantsShuffled = league.competitors.shuffled()
         league.stage.rounds = scheduling.mapIndexed { i, pairs ->
             Round("Round ${i + 1}", i + 1, "").also { r ->
                 r.matches = pairs.mapIndexed { j, (a, b) ->
@@ -51,8 +51,8 @@ object CompetitionCreatorService {
     private fun Session.createCup(creator: User, cupCreation: CompetitionCreationRequest.Cup): Long {
         val cup = cupCreation.toNode()
         cup.creator = creator
-        cup.participants = cupCreation.competitors.map { it.toNode() }
-        val finalMatchSource = CompetitionAlgorithmService.cupMatchSource(cup.participants.indices)
+        cup.competitors = cupCreation.competitors.map { it.toNode() }
+        val finalMatchSource = CompetitionAlgorithmService.cupMatchSource(cup.competitors.indices)
             as CompetitionAlgorithmService.CupMatchSource.Match
         cup.stages = listOf(PlayoffsStage(roundCount = finalMatchSource.roundOrdinal))
         cup.stage.run {
@@ -66,9 +66,9 @@ object CompetitionCreatorService {
     private fun Session.createTournament(creator: User, tournamentCreation: CompetitionCreationRequest.Tournament): Long {
         val tournament = tournamentCreation.toNode()
         tournament.creator = creator
-        tournament.participants = tournamentCreation.competitors.map { it.toNode() }.shuffled()
+        tournament.competitors = tournamentCreation.competitors.map { it.toNode() }.shuffled()
         val groupsStructure = CompetitionAlgorithmService
-            .groupsWithCount(tournament.participants, tournamentCreation.groupCount)
+            .groupsWithCount(tournament.competitors, tournamentCreation.groupCount)
             .map { it to CompetitionAlgorithmService.leagueScheduling(it.size) }
         val groupStageRoundCount = groupsStructure.maxOfOrNull { (_, sch) -> sch.size }!!
         val groupStage = GroupStage(name = "Group stage", roundCount = groupStageRoundCount).also { gs ->
@@ -83,7 +83,7 @@ object CompetitionCreatorService {
                                 m.round = gs.rounds[ri]
                                 m.participations = listOf(a, b).map { pi ->
                                     FixMatchParticipation().also { fmp ->
-                                        fmp.competitor = tournament.participants[pi]
+                                        fmp.competitor = tournament.competitors[pi]
                                     }
                                 }
                             }
@@ -148,7 +148,7 @@ object CompetitionCreatorService {
         return when (cupMatchSource) {
             is CompetitionAlgorithmService.CupMatchSource.Participant -> {
                 FixMatchParticipation().also { fmp ->
-                    fmp.competitor = cup.participants[cupMatchSource.index]
+                    fmp.competitor = cup.competitors[cupMatchSource.index]
                 }
             }
             is CompetitionAlgorithmService.CupMatchSource.Match -> {

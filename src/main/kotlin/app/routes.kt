@@ -1,18 +1,30 @@
 package app
 
+import app.dao.CompetitionGraph
 import app.dto.*
+import app.error.RequestError
+import app.model.Match
 import app.serialization.JsonConfig.json
 import app.service.*
 import atUTC
 import io.ktor.application.*
 import io.ktor.auth.*
-import io.ktor.http.*
+import io.ktor.html.*
 import io.ktor.http.HttpStatusCode.Companion.OK
+import io.ktor.http.cio.websocket.*
+import io.ktor.http.content.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.websocket.*
+import kotlinx.html.body
+import kotlinx.html.div
+import kotlinx.html.script
+import kotlinx.html.unsafe
 import kotlinx.serialization.encodeToString
+import org.neo4j.ogm.session.load
+import resourceFile
+import resourceFileText
 import startOfDay
 import toZonedDateTime
 import userPrincipal
@@ -20,6 +32,10 @@ import utcNow
 import java.time.LocalDateTime
 
 fun Routing.configureRoutes() {
+
+    static("/static") {
+        files(resourceFile("web"))
+    }
 
     post("/register") {
         val requestBody: UserRegistrationRequest = call.receive()
@@ -35,16 +51,54 @@ fun Routing.configureRoutes() {
 
     get("/matches") {
         val (startDateTime, endDateTime) = call.request.startDateTimeAndEndDateTimeLenientRequestParams()
-        val responseBody: List<MatchListElementResponse> = MatchRetrievalService.getMatchesBetween(startDateTime, endDateTime)
+        val responseBody: List<MatchListElementResponse> = MatchRetrievalService
+            .getMatchesBetween(startDateTime, endDateTime)
         call.respond(responseBody)
     }
 
-    get("/matches/{id}/stream-view") {
+    get("/competitions") {
+        val (startDateTime, endDateTime) = call.request.startDateTimeAndEndDateTimeLenientRequestParams()
+        val responseBody: List<CompetitionListElementResponse> = CompetitionRetrievalService
+            .getCompetitionsBetween(startDateTime, endDateTime)
+        call.respond(json.encodeToString(responseBody))
+    }
 
+    get("/matches/{id}/stream-view") {
+        val id = call.parameters["id"]!!.toLong()
+        val match = CompetitionGraph.readOnlyTransaction { load<Match>(id, depth = 2) ?: RequestError.MatchNotFound() }
+        call.respondHtml {
+            body {
+                div("container") {
+                    div("logo-container") {  }
+                    div("participants") {
+                        match.participations.forEach { p ->
+                            div("participant") {
+                                div("participant-name") {
+                                    text(p.competitionParticipant?.name ?: "-")
+                                }
+                                div("participant-score") {
+                                    p.score?.let { text(it) }
+                                }
+                            }
+                        }
+                    }
+                }
+                script(src = "/static/match_stream.js") {}
+            }
+        }
     }
 
     webSocket("/matches/{id}") {
-
+        val id = call.parameters["id"]!!.toLong()
+        val matchChannel = MatchSubscriptionService.subscribe(id)
+        try {
+            for (m in matchChannel) {
+                outgoing.send(Frame.Text(json.encodeToString(MatchStreamFrame(
+                    m.participations.map { MatchStreamFrame.Participant(it.competitionParticipant?.name, it.score) }))))
+            }
+        } finally {
+            matchChannel.close()
+        }
     }
 
     get("/competitions/{id}/matches-stream-view") {
@@ -93,7 +147,8 @@ fun Routing.configureRoutes() {
             val userPrincipal = call.userPrincipal!!
             val requestBody: CompetitionUpdateRequest = call.receive()
             CompetitionEditorService.updateCompetition(id, requestBody, userPrincipal)
-            call.respond(OK)
+            val responseBody: CompetitionResponse = CompetitionRetrievalService.getCompetition(userPrincipal, id)
+            call.respond(responseBody)
         }
 
         patch("matches/{id}") {
@@ -101,7 +156,8 @@ fun Routing.configureRoutes() {
             val userPrincipal = call.userPrincipal!!
             val requestBody: MatchUpdateRequest = call.receive()
             MatchEditorService.updateMatch(id, requestBody, userPrincipal)
-            call.respond(OK)
+            val responseBody: MatchResponse = MatchRetrievalService.getMatch(id, userPrincipal)
+            call.respond(responseBody)
         }
 
         post("matches/{id}/editors") {

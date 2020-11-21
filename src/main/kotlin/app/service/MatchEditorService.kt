@@ -26,22 +26,6 @@ object MatchEditorService {
         }
     }
 
-    fun updateMatch(id: Long, update: MatchUpdateRequest, userPrincipal: UserPrincipal) {
-        CompetitionGraph.readWriteTransaction {
-            val match = load<Match>(id, depth = 2) ?: RequestError.MatchNotFound()
-            val editPermission = editPermissionForUserWithId(match, userPrincipal.id)
-            if (editPermission == NONE) RequestError.UserCannotEditMatch()
-            update.description?.let { match.description = it }
-            update.scores?.let { match.updateScores(it) }
-            update.state?.let { match.updateState(it) }
-            update.dateTime?.let {
-                if (editPermission != FULL) RequestError.UserCannotEditMatchDateTime
-                match.dateTime = it.atUTC()
-            }
-            save(match)
-        }
-    }
-    
     fun addMatchEditor(id: Long, editorRequest: MatchEditorAdditionRequest, userPrincipal: UserPrincipal) {
         CompetitionGraph.readWriteTransaction {
             val editorFilter = Filter(User::email.name, ComparisonOperator.EQUALS, editorRequest.editorEmail)
@@ -65,7 +49,27 @@ object MatchEditorService {
         }
     }
 
-    private fun Match.updateScores(newScores: List<MatchUpdateRequest.ScoreUpdate>) {
+    suspend fun updateMatch(id: Long, update: MatchUpdateRequest, userPrincipal: UserPrincipal) {
+        CompetitionGraph.readWriteTransaction {
+            val match = load<Match>(id, depth = 4) ?: RequestError.MatchNotFound()
+            val editPermission = editPermissionForUserWithId(match, userPrincipal.id)
+            if (editPermission == NONE) RequestError.UserCannotEditMatch()
+            update.description?.let { match.description = it }
+            update.scores?.let { match.updateScores(it, update.state) }
+            update.state?.let { match.updateState(it) }
+            update.dateTime?.let {
+                if (editPermission != FULL) RequestError.UserCannotEditMatchDateTime
+                match.dateTime = it.atUTC()
+            }
+            save(match)
+            MatchSubscriptionService.matchUpdated(match)
+        }
+    }
+
+    private fun Match.updateScores(newScores: List<MatchUpdateRequest.ScoreUpdate>, newState: Match.State?) {
+        if (newState == NOT_STARTED_YET || (newState == null && state == NOT_STARTED_YET)) {
+            RequestError.UnstartedMatchScoreCannotBeModified()
+        }
         val participations = participations.onEach {
             it.competitionParticipant ?: RequestError.MatchScoresCannotBeModifiedWhileUnknownParticipant()
         }

@@ -21,6 +21,7 @@ dependencies {
     testImplementation(kotlin("test-junit"))
     testImplementation("com.github.stefanbirkner:system-rules:1.19.0")
     testImplementation("com.github.javafaker:javafaker:1.0.2")
+    testImplementation("org.seleniumhq.selenium:selenium-java:3.141.59")
 
     implementation(ktor("server-netty"))
     implementation(ktor("html-builder"))
@@ -30,6 +31,7 @@ dependencies {
     implementation(ktor("client-cio"))
     implementation(ktor("websockets"))
 
+    implementation("org.pcollections:pcollections:3.1.4")
     implementation("org.neo4j:neo4j-ogm-core:3.2.17")
     runtimeOnly("org.neo4j:neo4j-ogm-bolt-driver:3.2.17")
     implementation("org.mindrot:jbcrypt:0.4")

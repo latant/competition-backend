@@ -2,6 +2,7 @@ package app.test
 
 import app.dao.CompetitionGraph
 import app.dto.*
+import app.model.Match
 import com.github.javafaker.Faker
 import io.ktor.http.*
 import io.ktor.http.HttpMethod.Companion.Get
@@ -10,11 +11,14 @@ import io.ktor.http.HttpMethod.Companion.Post
 import io.ktor.http.HttpStatusCode.Companion.Forbidden
 import io.ktor.http.HttpStatusCode.Companion.OK
 import io.ktor.server.testing.*
+import kotlinx.coroutines.delay
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.contrib.java.lang.system.EnvironmentVariables
+import java.security.SecureRandom
 import java.time.ZonedDateTime
+import kotlin.random.Random
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
@@ -31,10 +35,11 @@ class ApiTests {
     private var cupId = 0L
     private var tournamentId = 0L
 
-    private fun registerUser(): AccessTokenResponse = withApp {
-        val name = faker.name().name()
-        val email = "${faker.name().username()}@gmail.com"
-        val password = faker.letterify("???????")
+    private fun registerUser(
+        name: String = faker.name().name(),
+        email: String = "${faker.name().username()}@gmail.com",
+        password: String = faker.letterify("???????"),
+    ): AccessTokenResponse = withApp {
         handleRequest(Post, "/register") {
             jsonBody(UserRegistrationRequest(name, email, password))
         }
@@ -48,8 +53,8 @@ class ApiTests {
         CompetitionGraph.session {
             purgeDatabase()
         }
-        accessToken1 = registerUser()
-        accesstoken2 = registerUser()
+        accessToken1 = registerUser(email = "demo1@demo.com", password = "demo")
+        accesstoken2 = registerUser(email = "demo2@demo.com", password = "demo")
     }
 
     private fun TestApplicationRequest.authenticate(accessTokenResponse: AccessTokenResponse) {
@@ -217,6 +222,38 @@ class ApiTests {
             val cup = handleRequest(Get, "competitions/$cupId").response.body<CompetitionResponse>()!!
             cup as CompetitionResponse.Cup
             assertEquals("My new Cup name", cup.name)
+        }
+    }
+
+    @Test
+    fun testPeriodicMatchUpdate() {
+        withApp {
+            testAllMatches()
+
+            val league = handleRequest(Get, "competitions/$leagueId") {}.response.body<CompetitionResponse>()
+                    as CompetitionResponse.League
+
+            val random = SecureRandom()
+
+            while (true) {
+                Thread.sleep(100)
+
+                val match = league.matches.random()
+                val participant = match.participants.random() as CompetitionResponse.Match.Participant.Fix
+                val score = random.nextInt() % 10 + 10
+
+                val scoreUpdate = MatchUpdateRequest.ScoreUpdate(participant.participantId, score.toDouble())
+                val requestBody = MatchUpdateRequest(state = Match.State.ONGOING, scores = listOf(scoreUpdate))
+                println(requestBody)
+
+                val resp = handleRequest(Patch, "matches/${match.id}") {
+                    authenticate(accessToken1)
+                    jsonBody(requestBody)
+                }.response
+
+                assertEquals(OK, resp.status())
+
+            }
         }
     }
 

@@ -20,11 +20,9 @@ import io.ktor.websocket.*
 import kotlinx.html.body
 import kotlinx.html.div
 import kotlinx.html.script
-import kotlinx.html.unsafe
 import kotlinx.serialization.encodeToString
 import org.neo4j.ogm.session.load
 import resourceFile
-import resourceFileText
 import startOfDay
 import toZonedDateTime
 import userPrincipal
@@ -74,7 +72,7 @@ fun Routing.configureRoutes() {
                         match.participations.forEach { p ->
                             div("participant") {
                                 div("participant-name") {
-                                    text(p.competitionParticipant?.name ?: "-")
+                                    text(p.competitor?.name ?: "-")
                                 }
                                 div("participant-score") {
                                     p.score?.let { text(it) }
@@ -94,7 +92,7 @@ fun Routing.configureRoutes() {
         try {
             for (m in matchChannel) {
                 outgoing.send(Frame.Text(json.encodeToString(MatchStreamFrame(
-                    m.participations.map { MatchStreamFrame.Participant(it.competitionParticipant?.name, it.score) }))))
+                    m.participations.map { MatchStreamFrame.Participant(it.competitor?.name, it.score) }))))
             }
         } finally {
             matchChannel.close()

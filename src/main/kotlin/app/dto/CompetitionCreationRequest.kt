@@ -9,7 +9,7 @@ import java.time.ZonedDateTime
 sealed class CompetitionCreationRequest {
 
     @Serializable
-    data class Participant(val name: String, val description: String = "")
+    data class Competitor(val name: String, val description: String = "")
 
     @Serializable
     @SerialName("League")
@@ -18,7 +18,7 @@ sealed class CompetitionCreationRequest {
         val dateTime: @Contextual ZonedDateTime,
         val displayColor: String = "#0000ff",
         val description: String = "",
-        val participants: List<Participant>,
+        val competitors: List<Competitor>,
         val roundCount: Int? = null,
     ) : CompetitionCreationRequest()
 
@@ -29,7 +29,7 @@ sealed class CompetitionCreationRequest {
         val dateTime: @Contextual ZonedDateTime,
         val displayColor: String = "#0000ff",
         val description: String = "",
-        val participants: List<Participant>
+        val competitors: List<Competitor>
     ) : CompetitionCreationRequest()
 
     @Serializable
@@ -39,7 +39,7 @@ sealed class CompetitionCreationRequest {
         val dateTime: @Contextual ZonedDateTime,
         val displayColor: String = "#0000ff",
         val description: String = "",
-        val participants: List<Participant>,
+        val competitors: List<Competitor>,
         val groupCount: Int,
         val playOffParticipantCount: Int,
     ) : CompetitionCreationRequest()

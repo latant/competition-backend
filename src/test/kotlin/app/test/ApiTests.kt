@@ -11,14 +11,12 @@ import io.ktor.http.HttpMethod.Companion.Post
 import io.ktor.http.HttpStatusCode.Companion.Forbidden
 import io.ktor.http.HttpStatusCode.Companion.OK
 import io.ktor.server.testing.*
-import kotlinx.coroutines.delay
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.contrib.java.lang.system.EnvironmentVariables
 import java.security.SecureRandom
 import java.time.ZonedDateTime
-import kotlin.random.Random
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
@@ -69,15 +67,15 @@ class ApiTests {
                 jsonBody<CompetitionCreationRequest>(CompetitionCreationRequest.League(
                     name = "My League",
                     dateTime = ZonedDateTime.now(),
-                    participants = listOf(
-                        CompetitionCreationRequest.Participant("Eagles"),
-                        CompetitionCreationRequest.Participant("Lions"),
-                        CompetitionCreationRequest.Participant("Bulls"),
-                        CompetitionCreationRequest.Participant("Hornets"),
-                        CompetitionCreationRequest.Participant("Wolves"),
-                        CompetitionCreationRequest.Participant("Tigers"),
-                        CompetitionCreationRequest.Participant("Hawks"),
-                        CompetitionCreationRequest.Participant("Sharks"),
+                    competitors = listOf(
+                        CompetitionCreationRequest.Competitor("Eagles"),
+                        CompetitionCreationRequest.Competitor("Lions"),
+                        CompetitionCreationRequest.Competitor("Bulls"),
+                        CompetitionCreationRequest.Competitor("Hornets"),
+                        CompetitionCreationRequest.Competitor("Wolves"),
+                        CompetitionCreationRequest.Competitor("Tigers"),
+                        CompetitionCreationRequest.Competitor("Hawks"),
+                        CompetitionCreationRequest.Competitor("Sharks"),
                     )
                 ))
             }.response
@@ -100,15 +98,15 @@ class ApiTests {
                 jsonBody<CompetitionCreationRequest>(CompetitionCreationRequest.Cup(
                     name = "My Cup",
                     dateTime = ZonedDateTime.now(),
-                    participants = listOf(
-                        CompetitionCreationRequest.Participant("Eagles"),
-                        CompetitionCreationRequest.Participant("Lions"),
-                        CompetitionCreationRequest.Participant("Bulls"),
-                        CompetitionCreationRequest.Participant("Hornets"),
-                        CompetitionCreationRequest.Participant("Wolves"),
-                        CompetitionCreationRequest.Participant("Tigers"),
-                        CompetitionCreationRequest.Participant("Hawks"),
-                        CompetitionCreationRequest.Participant("Sharks"),
+                    competitors = listOf(
+                        CompetitionCreationRequest.Competitor("Eagles"),
+                        CompetitionCreationRequest.Competitor("Lions"),
+                        CompetitionCreationRequest.Competitor("Bulls"),
+                        CompetitionCreationRequest.Competitor("Hornets"),
+                        CompetitionCreationRequest.Competitor("Wolves"),
+                        CompetitionCreationRequest.Competitor("Tigers"),
+                        CompetitionCreationRequest.Competitor("Hawks"),
+                        CompetitionCreationRequest.Competitor("Sharks"),
                     )
                 ))
             }.response
@@ -133,15 +131,15 @@ class ApiTests {
                     dateTime = ZonedDateTime.now(),
                     groupCount = 2,
                     playOffParticipantCount = 4,
-                    participants = listOf(
-                        CompetitionCreationRequest.Participant("Eagles"),
-                        CompetitionCreationRequest.Participant("Lions"),
-                        CompetitionCreationRequest.Participant("Bulls"),
-                        CompetitionCreationRequest.Participant("Hornets"),
-                        CompetitionCreationRequest.Participant("Wolves"),
-                        CompetitionCreationRequest.Participant("Tigers"),
-                        CompetitionCreationRequest.Participant("Hawks"),
-                        CompetitionCreationRequest.Participant("Sharks"),
+                    competitors = listOf(
+                        CompetitionCreationRequest.Competitor("Eagles"),
+                        CompetitionCreationRequest.Competitor("Lions"),
+                        CompetitionCreationRequest.Competitor("Bulls"),
+                        CompetitionCreationRequest.Competitor("Hornets"),
+                        CompetitionCreationRequest.Competitor("Wolves"),
+                        CompetitionCreationRequest.Competitor("Tigers"),
+                        CompetitionCreationRequest.Competitor("Hawks"),
+                        CompetitionCreationRequest.Competitor("Sharks"),
                     )
                 ))
             }.response
@@ -242,7 +240,7 @@ class ApiTests {
                 val participant = match.participants.random() as CompetitionResponse.Match.Participant.Fix
                 val score = random.nextInt() % 10 + 10
 
-                val scoreUpdate = MatchUpdateRequest.ScoreUpdate(participant.participantId, score.toDouble())
+                val scoreUpdate = MatchUpdateRequest.ScoreUpdate(participant.competitorId, score.toDouble())
                 val requestBody = MatchUpdateRequest(state = Match.State.ONGOING, scores = listOf(scoreUpdate))
                 println(requestBody)
 

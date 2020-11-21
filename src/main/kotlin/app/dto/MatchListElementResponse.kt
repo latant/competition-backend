@@ -25,8 +25,8 @@ data class MatchListElementResponse(
         @Serializable
         @SerialName("Fix")
         data class Fix(
-            val participantId: Long,
-            val participantName: String,
+            val competitorId: Long,
+            val competitorName: String,
             val score: Double?,
         ) : Participant()
 
@@ -35,8 +35,8 @@ data class MatchListElementResponse(
         @SerialName("ProceededFromMatch")
         data class ProceededFromMatch(
             val matchId: Long,
-            val participantId: Long?,
-            val participantName: String?,
+            val competitorId: Long?,
+            val competitorName: String?,
             val score: Double?,
         ): Participant()
 
@@ -47,8 +47,8 @@ data class MatchListElementResponse(
             val groupId: Long,
             val groupName: String,
             val groupPlace: Int,
-            val participantId: Long?,
-            val participantName: String?,
+            val competitorId: Long?,
+            val competitorName: String?,
             val score: Double?
         ) : Participant()
 

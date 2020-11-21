@@ -52,7 +52,7 @@ fun main() {
             val participant = match.participants.random() as CompetitionResponse.Match.Participant.Fix
             val score = random.nextInt() % 10 + 10
 
-            val scoreUpdate = MatchUpdateRequest.ScoreUpdate(participant.participantId, score.toDouble())
+            val scoreUpdate = MatchUpdateRequest.ScoreUpdate(participant.competitorId, score.toDouble())
             val requestBody = MatchUpdateRequest(state = Match.State.ONGOING, scores = listOf(scoreUpdate))
             println(requestBody)
 

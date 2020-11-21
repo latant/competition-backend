@@ -11,7 +11,7 @@ class Group(val name: String, val description: String) : Entity() {
     lateinit var matches: List<Match>
 
     @Relationship(PARTICIPANT_IN_GROUP, direction = INCOMING)
-    lateinit var participants: List<CompetitionParticipant>
+    lateinit var participants: List<Competitor>
 
     @Relationship(GROUP_OF_GROUP_STAGE)
     lateinit var groupStage: GroupStage

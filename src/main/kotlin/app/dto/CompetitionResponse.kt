@@ -14,7 +14,7 @@ sealed class CompetitionResponse {
         val id: Long,
         val name: String,
         val matches: List<Match>,
-        val participants: List<CompetitionParticipant>,
+        val competitors: List<Competitor>,
         val rounds: List<Round>,
         val editable: Boolean?,
     ) : CompetitionResponse()
@@ -25,7 +25,7 @@ sealed class CompetitionResponse {
         val id: Long,
         val name: String,
         val matches: List<Match>,
-        val participants: List<CompetitionParticipant>,
+        val competitors: List<Competitor>,
         val rounds: List<Round>,
         val editable: Boolean?,
     ) : CompetitionResponse()
@@ -36,7 +36,7 @@ sealed class CompetitionResponse {
         val id: Long,
         val name: String,
         val matches: List<Match>,
-        val participants: List<CompetitionParticipant>,
+        val competitors: List<Competitor>,
         val groupStageRounds: List<Round>,
         val playoffsStageRounds: List<Round>,
         val groups: List<Group>,
@@ -67,7 +67,7 @@ sealed class CompetitionResponse {
             @Serializable
             @SerialName("Fix")
             data class Fix(
-                val participantId: Long,
+                val competitorId: Long,
                 val score: Double?,
             ) : Participant()
 
@@ -76,7 +76,7 @@ sealed class CompetitionResponse {
             @SerialName("ProceededFromMatch")
             data class ProceededFromMatch(
                 val matchId: Long,
-                val participantId: Long?,
+                val competitorId: Long?,
                 val score: Double?,
             ): Participant()
 
@@ -86,7 +86,7 @@ sealed class CompetitionResponse {
             data class ProceededFromGroup(
                 val groupId: Long,
                 val groupPlace: Int,
-                val participantId: Long?,
+                val competitorId: Long?,
                 val score: Double?
             ) : Participant()
 
@@ -94,7 +94,7 @@ sealed class CompetitionResponse {
     }
 
     @Serializable
-    data class CompetitionParticipant(
+    data class Competitor(
         val id: Long,
         val name: String,
         val description: String

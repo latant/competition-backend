@@ -6,7 +6,6 @@ import app.dto.CompetitionResponse
 import app.error.RequestError
 import app.model.*
 import app.security.UserPrincipal
-import app.service.CompetitionRetrievalService.toCompetitionDTO
 import org.neo4j.ogm.cypher.ComparisonOperator
 import org.neo4j.ogm.cypher.Filter
 import org.neo4j.ogm.session.load
@@ -42,7 +41,7 @@ object CompetitionRetrievalService {
             id = id!!,
             name = name,
             matches = matches.map { it.toMatchDTO() },
-            participants = participants.map { it.toCompetitionParticipantDTO() },
+            competitors = participants.map { it.toCompetitorDTO() },
             rounds = stage.rounds.map { it.toRoundDTO() },
             editable = editable
         )
@@ -50,7 +49,7 @@ object CompetitionRetrievalService {
             id = id!!,
             name = name,
             matches = matches.map { it.toMatchDTO() },
-            participants = participants.map { it.toCompetitionParticipantDTO() },
+            competitors = participants.map { it.toCompetitorDTO() },
             rounds = stage.rounds.map { it.toRoundDTO() },
             editable = editable
         )
@@ -58,7 +57,7 @@ object CompetitionRetrievalService {
             id = id!!,
             name = name,
             matches = matches.map { it.toMatchDTO() },
-            participants = participants.map { it.toCompetitionParticipantDTO() },
+            competitors = participants.map { it.toCompetitorDTO() },
             groupStageRounds = groupStage.rounds.map { it.toRoundDTO() },
             playoffsStageRounds = playoffsStage.rounds.map { it.toRoundDTO() },
             groups = groupStage.groups.map { it.toGroupDTO() },
@@ -76,16 +75,16 @@ object CompetitionRetrievalService {
     private fun MatchParticipation.toMatchParticipantDTO(): CompetitionResponse.Match.Participant {
         return when(this) {
             is FixMatchParticipation -> CompetitionResponse.Match.Participant.Fix(
-                participantId = competitionParticipant!!.id!!,
+                competitorId = competitor!!.id!!,
                 score = score,
             )
             is ProceededMatchParticipation -> CompetitionResponse.Match.Participant.ProceededFromMatch(
-                participantId = competitionParticipant?.id,
+                competitorId = competitor?.id,
                 score = score,
                 matchId = matchToWin.id!!,
             )
             is PlayoffsQuoteMatchParticipation -> CompetitionResponse.Match.Participant.ProceededFromGroup(
-                participantId = competitionParticipant?.id,
+                competitorId = competitor?.id,
                 score = score,
                 groupId = group.id!!,
                 groupPlace = groupPlace
@@ -94,8 +93,8 @@ object CompetitionRetrievalService {
         }
     }
 
-    private fun CompetitionParticipant.toCompetitionParticipantDTO(): CompetitionResponse.CompetitionParticipant {
-        return CompetitionResponse.CompetitionParticipant(
+    private fun Competitor.toCompetitorDTO(): CompetitionResponse.Competitor {
+        return CompetitionResponse.Competitor(
             id = id!!,
             name = name,
             description = description

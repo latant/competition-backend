@@ -13,5 +13,5 @@ data class MatchUpdateRequest(
     val scores: List<ScoreUpdate>? = null,
 ) {
     @Serializable
-    data class ScoreUpdate(val participantId: Long, val score: Double)
+    data class ScoreUpdate(val competitorId: Long, val score: Double)
 }

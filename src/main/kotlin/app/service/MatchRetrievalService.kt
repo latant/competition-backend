@@ -7,10 +7,6 @@ import app.dto.MatchResponse.EditPermission.NONE
 import app.error.RequestError
 import app.model.*
 import app.security.UserPrincipal
-import app.service.MatchRetrievalService.toMatchListElementCompetitionDTO
-import app.service.MatchRetrievalService.toMatchListElementGroupDTO
-import app.service.MatchRetrievalService.toMatchListElementParticipantDTO
-import app.service.MatchRetrievalService.toMatchListElementRoundDTO
 import org.neo4j.ogm.cypher.ComparisonOperator
 import org.neo4j.ogm.cypher.Filter
 import org.neo4j.ogm.cypher.Filters
@@ -70,19 +66,19 @@ object MatchRetrievalService {
     private fun MatchParticipation.toMatchListElementParticipantDTO(): MatchListElementResponse.Participant {
         return when (this) {
             is FixMatchParticipation -> MatchListElementResponse.Participant.Fix(
-                participantId = competitionParticipant!!.id!!,
-                participantName = competitionParticipant!!.name,
+                competitorId = competitor!!.id!!,
+                competitorName = competitor!!.name,
                 score = score,
             )
             is ProceededMatchParticipation -> MatchListElementResponse.Participant.ProceededFromMatch(
-                participantId = competitionParticipant?.id,
-                participantName = competitionParticipant?.name,
+                competitorId = competitor?.id,
+                competitorName = competitor?.name,
                 score = score,
                 matchId = matchToWin.id!!,
             )
             is PlayoffsQuoteMatchParticipation -> MatchListElementResponse.Participant.ProceededFromGroup(
-                participantId = competitionParticipant?.id,
-                participantName = competitionParticipant?.name,
+                competitorId = competitor?.id,
+                competitorName = competitor?.name,
                 score = score,
                 groupId = group.id!!,
                 groupName = group.name,
@@ -123,19 +119,19 @@ object MatchRetrievalService {
     private fun MatchParticipation.toMatchParticipantDTO(): MatchResponse.Participant {
         return when (this) {
             is FixMatchParticipation -> MatchResponse.Participant.Fix(
-                participantId = competitionParticipant!!.id!!,
-                participantName = competitionParticipant!!.name,
+                competitorId = competitor!!.id!!,
+                competitorName = competitor!!.name,
                 score = score,
             )
             is ProceededMatchParticipation -> MatchResponse.Participant.ProceededFromMatch(
-                participantId = competitionParticipant?.id,
-                participantName = competitionParticipant?.name,
+                competitorId = competitor?.id,
+                competitorName = competitor?.name,
                 score = score,
                 matchId = matchToWin.id!!,
             )
             is PlayoffsQuoteMatchParticipation -> MatchResponse.Participant.ProceededFromGroup(
-                participantId = competitionParticipant?.id,
-                participantName = competitionParticipant?.name,
+                competitorId = competitor?.id,
+                competitorName = competitor?.name,
                 score = score,
                 groupId = group.id!!,
                 groupName = group.name,

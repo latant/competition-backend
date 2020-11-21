@@ -14,6 +14,6 @@ abstract class MatchParticipation : Entity() {
     lateinit var match: Match
 
     @Relationship(PARTICIPATE_IN_MATCH_PARTICIPATION, direction = INCOMING)
-    var competitionParticipant: CompetitionParticipant? = null
+    var competitor: Competitor? = null
 
 }

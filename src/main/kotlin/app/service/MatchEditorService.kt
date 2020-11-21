@@ -71,10 +71,10 @@ object MatchEditorService {
             RequestError.UnstartedMatchScoreCannotBeModified()
         }
         val participations = participations.onEach {
-            it.competitionParticipant ?: RequestError.MatchScoresCannotBeModifiedWhileUnknownParticipant()
+            it.competitor ?: RequestError.MatchScoresCannotBeModifiedWhileUnknownParticipant()
         }
         newScores.forEach { u ->
-            val p = participations.find { it.competitionParticipant!!.id == u.participantId }
+            val p = participations.find { it.competitor!!.id == u.competitorId }
                 ?: RequestError.MatchScoreCannotBeModifiedForParticipantNotInMatch()
             p.score = u.score
         }

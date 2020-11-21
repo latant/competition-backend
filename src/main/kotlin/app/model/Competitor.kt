@@ -4,7 +4,7 @@ import org.neo4j.ogm.annotation.NodeEntity
 import org.neo4j.ogm.annotation.Relationship
 
 @NodeEntity
-class CompetitionParticipant(
+class Competitor(
     val name: String,
     val description: String,
 ) : Entity() {

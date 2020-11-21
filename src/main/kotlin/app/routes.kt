@@ -195,6 +195,12 @@ fun Routing.configureRoutes() {
 
     }
 
+    get("groups/{id}") {
+        val groupId = call.parameters["id"]!!.toLong()
+        val responseBody: GroupResponse = CompetitionRetrievalService.getGroup(groupId)
+        call.respond(responseBody)
+    }
+
 }
 
 

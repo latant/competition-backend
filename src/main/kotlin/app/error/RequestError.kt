@@ -21,6 +21,7 @@ enum class RequestError(val statusCode: HttpStatusCode, val message: String = ""
     MatchCannotBeRevivedFromEndedState(BadRequest),
     InvalidMatchEditorEmail(BadRequest),
     UnstartedMatchScoreCannotBeModified(BadRequest),
+    GroupNotFound(NotFound),
 
     ;
 

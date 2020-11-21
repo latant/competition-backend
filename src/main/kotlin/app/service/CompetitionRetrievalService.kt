@@ -3,6 +3,7 @@ package app.service
 import app.dao.CompetitionGraph
 import app.dto.CompetitionListElementResponse
 import app.dto.CompetitionResponse
+import app.dto.GroupResponse
 import app.dto.StandingsTable
 import app.error.RequestError
 import app.model.*
@@ -28,6 +29,13 @@ object CompetitionRetrievalService {
         val filter = startDateTimeFilter.and(endDateTimeFilter)
         return CompetitionGraph.readOnlyTransaction { loadAll<Competition>(filter) }
             .map { it.toCompetitionListElementDTO() }
+    }
+
+    fun getGroup(groupId: Long): GroupResponse {
+        CompetitionGraph.readOnlyTransaction {
+            val group = load<Group>(groupId, depth = 3) ?: RequestError.GroupNotFound()
+            return group.toGroupDTO()
+        }
     }
 
     private fun Competition.toCompetitionListElementDTO(): CompetitionListElementResponse = when (this) {
@@ -62,7 +70,7 @@ object CompetitionRetrievalService {
             competitors = competitors.map { it.toCompetitorDTO() },
             groupStageRounds = groupStage.rounds.map { it.toRoundDTO() },
             playoffsStageRounds = playoffsStage.rounds.map { it.toRoundDTO() },
-            groups = groupStage.groups.map { it.toGroupDTO() },
+            groups = groupStage.groups.map { it.toTournamentGroupDTO() },
             editable = editable,
         )
         else -> error("Unknown competition type: ${this::class.qualifiedName}")
@@ -105,12 +113,39 @@ object CompetitionRetrievalService {
 
     private fun Round.toRoundDTO() = CompetitionResponse.Round(id = id!!, name = name, matchIds = matches.map { it.id!! })
 
-    private fun Group.toGroupDTO() = CompetitionResponse.Tournament.Group(
+    private fun Group.toTournamentGroupDTO() = CompetitionResponse.Tournament.Group(
         id = id!!,
         name = name,
         matchIds = matches.map { it.id!! },
         competitorIds = competitors.map { it.id!! },
         standingsTable = standingsTable(),
+    )
+
+    private fun Group.toGroupDTO() = GroupResponse(
+        id = id!!,
+        name = name,
+        matches = matches.map { it.toGroupMatchDTO() },
+        competitors = competitors.map { it.toGroupCompetitorDTO() },
+        standingsTable = standingsTable(),
+        competitionId = groupStage.competition.id!!,
+        competitionName = groupStage.competition.name,
+    )
+
+    private fun Competitor.toGroupCompetitorDTO() = GroupResponse.Competitor(
+        id = id!!,
+        name = name,
+        description = description,
+    )
+
+    private fun Match.toGroupMatchDTO() = GroupResponse.Match(
+        id = id!!,
+        dateTime = dateTime,
+        participants = participations.map { (it as FixMatchParticipation).toGroupMatchParticipantDTO() },
+    )
+
+    private fun FixMatchParticipation.toGroupMatchParticipantDTO() = GroupResponse.Match.Participant(
+        competitorId = competitor!!.id!!,
+        score = score,
     )
 
     private fun League.standingsTable() = standingsTable(matches.toSet(), competitors)

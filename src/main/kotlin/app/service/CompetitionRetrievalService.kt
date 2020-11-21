@@ -129,6 +129,12 @@ object CompetitionRetrievalService {
         standingsTable = standingsTable(),
         competitionId = groupStage.competition.id!!,
         competitionName = groupStage.competition.name,
+        playoffsQuotes = playoffsQuotes.map { it.toGroupQuoteDTO() }
+    )
+
+    private fun PlayoffsQuoteMatchParticipation.toGroupQuoteDTO() = GroupResponse.PlayoffsQuote(
+        place = groupPlace,
+        matchId = match.id!!
     )
 
     private fun Competitor.toGroupCompetitorDTO() = GroupResponse.Competitor(
@@ -151,7 +157,7 @@ object CompetitionRetrievalService {
     private fun League.standingsTable() = standingsTable(matches.toSet(), competitors)
     private fun Group.standingsTable() = standingsTable(matches.toSet(), competitors)
 
-    private fun standingsTable(matches: Set<Match>, competitors: List<Competitor>): StandingsTable {
+    fun standingsTable(matches: Set<Match>, competitors: List<Competitor>): StandingsTable {
         val records = competitors
             .map { it.standingsRecordIn(matches) }
             .sortedBy { it.scores }

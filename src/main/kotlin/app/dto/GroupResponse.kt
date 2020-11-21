@@ -13,7 +13,15 @@ data class GroupResponse(
     val standingsTable: StandingsTable,
     val competitionId: Long,
     val competitionName: String,
+    val playoffsQuotes: List<PlayoffsQuote>,
 ) {
+
+    @Serializable
+    data class PlayoffsQuote(
+        val place: Int,
+        val matchId: Long,
+    )
+
     @Serializable
     data class Competitor(
         val id: Long,

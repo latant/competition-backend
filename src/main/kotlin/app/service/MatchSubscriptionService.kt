@@ -13,9 +13,9 @@ import java.util.concurrent.atomic.AtomicReference
 
 object MatchSubscriptionService {
 
-    private val matchSubscriptions = AtomicReference<PMap<Long, PSet<Subscription>>>(HashTreePMap.empty())
+    private val matchSubscriptions = AtomicReference<PMap<Long, PSet<MatchChannel>>>(HashTreePMap.empty())
 
-    class Subscription(private val id: Long, private val channel: Channel<Match>): Channel<Match> by channel {
+    private class MatchChannel(private val id: Long, private val channel: Channel<Match>): Channel<Match> by channel {
         override fun close(cause: Throwable?): Boolean {
             matchSubscriptions.getAndUpdate {
                 val subscriptions = it[id]?.minus(this) ?: HashTreePSet.empty()
@@ -31,13 +31,19 @@ object MatchSubscriptionService {
         }
     }
 
-    suspend fun subscribe(id: Long): Subscription {
-        val subscription = CompetitionGraph.readOnlyTransaction {
+    suspend fun subscribe(id: Long, action: suspend (Match) -> Unit) {
+        val matchChannel = CompetitionGraph.readOnlyTransaction {
             val match = load<Match>(id, depth = 4) ?: RequestError.MatchNotFound()
-            Subscription(id, Channel<Match>(1).apply { send(match) })
+            MatchChannel(id, Channel<Match>(1).apply { send(match) })
         }
-        matchSubscriptions.getAndUpdate { it.plus(id, (it[id] ?: HashTreePSet.empty()).plus(subscription)) }
-        return subscription
+        matchSubscriptions.getAndUpdate { it.plus(id, (it[id] ?: HashTreePSet.empty()).plus(matchChannel)) }
+        try {
+            for (m in matchChannel) {
+                action(m)
+            }
+        } finally {
+            matchChannel.close()
+        }
     }
 
 }

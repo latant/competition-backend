@@ -1,9 +1,6 @@
 package app
 
-import app.dao.CompetitionGraph
 import app.dto.*
-import app.error.RequestError
-import app.model.Match
 import app.serialization.JsonConfig.json
 import app.service.*
 import atUTC
@@ -17,11 +14,7 @@ import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.websocket.*
-import kotlinx.html.body
-import kotlinx.html.div
-import kotlinx.html.script
 import kotlinx.serialization.encodeToString
-import org.neo4j.ogm.session.load
 import resourceFile
 import startOfDay
 import toZonedDateTime
@@ -63,39 +56,13 @@ fun Routing.configureRoutes() {
 
     get("/matches/{id}/stream-view") {
         val id = call.parameters["id"]!!.toLong()
-        val match = CompetitionGraph.readOnlyTransaction { load<Match>(id, depth = 2) ?: RequestError.MatchNotFound() }
-        call.respondHtml {
-            body {
-                div("container") {
-                    div("logo-container") {  }
-                    div("participants") {
-                        match.participations.forEach { p ->
-                            div("participant") {
-                                div("participant-name") {
-                                    text(p.competitor?.name ?: "-")
-                                }
-                                div("participant-score") {
-                                    p.score?.let { text(it) }
-                                }
-                            }
-                        }
-                    }
-                }
-                script(src = "/static/match_stream.js") {}
-            }
-        }
+        call.respondHtml(OK, StreamingService.getHtmlForMatch(id))
     }
 
     webSocket("/matches/{id}") {
         val id = call.parameters["id"]!!.toLong()
-        val matchChannel = MatchSubscriptionService.subscribe(id)
-        try {
-            for (m in matchChannel) {
-                outgoing.send(Frame.Text(json.encodeToString(MatchStreamFrame(
-                    m.participations.map { MatchStreamFrame.Participant(it.competitor?.name, it.score) }))))
-            }
-        } finally {
-            matchChannel.close()
+        StreamingService.feedMatchStream(id) {
+            outgoing.send(Frame.Text(json.encodeToString(it)))
         }
     }
 

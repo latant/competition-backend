@@ -17,6 +17,7 @@ sealed class CompetitionResponse {
         val competitors: List<Competitor>,
         val rounds: List<Round>,
         val editable: Boolean?,
+        val standingsTable: StandingsTable,
     ) : CompetitionResponse()
 
     @Serializable
@@ -47,7 +48,8 @@ sealed class CompetitionResponse {
             val id: Long,
             val name: String,
             val matchIds: List<Long>,
-            val participantIds: List<Long>
+            val competitorIds: List<Long>,
+            val standingsTable: StandingsTable,
         )
     }
 

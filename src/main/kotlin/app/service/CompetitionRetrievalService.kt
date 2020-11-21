@@ -3,6 +3,7 @@ package app.service
 import app.dao.CompetitionGraph
 import app.dto.CompetitionListElementResponse
 import app.dto.CompetitionResponse
+import app.dto.StandingsTable
 import app.error.RequestError
 import app.model.*
 import app.security.UserPrincipal
@@ -41,27 +42,28 @@ object CompetitionRetrievalService {
             id = id!!,
             name = name,
             matches = matches.map { it.toMatchDTO() },
-            competitors = participants.map { it.toCompetitorDTO() },
+            competitors = competitors.map { it.toCompetitorDTO() },
             rounds = stage.rounds.map { it.toRoundDTO() },
-            editable = editable
+            editable = editable,
+            standingsTable = standingsTable(),
         )
         is Cup -> CompetitionResponse.Cup(
             id = id!!,
             name = name,
             matches = matches.map { it.toMatchDTO() },
-            competitors = participants.map { it.toCompetitorDTO() },
+            competitors = competitors.map { it.toCompetitorDTO() },
             rounds = stage.rounds.map { it.toRoundDTO() },
-            editable = editable
+            editable = editable,
         )
         is Tournament -> CompetitionResponse.Tournament(
             id = id!!,
             name = name,
             matches = matches.map { it.toMatchDTO() },
-            competitors = participants.map { it.toCompetitorDTO() },
+            competitors = competitors.map { it.toCompetitorDTO() },
             groupStageRounds = groupStage.rounds.map { it.toRoundDTO() },
             playoffsStageRounds = playoffsStage.rounds.map { it.toRoundDTO() },
             groups = groupStage.groups.map { it.toGroupDTO() },
-            editable = editable
+            editable = editable,
         )
         else -> error("Unknown competition type: ${this::class.qualifiedName}")
     }
@@ -87,7 +89,7 @@ object CompetitionRetrievalService {
                 competitorId = competitor?.id,
                 score = score,
                 groupId = group.id!!,
-                groupPlace = groupPlace
+                groupPlace = groupPlace,
             )
             else -> error("Unknown match participant type: ${this::class.qualifiedName}")
         }
@@ -97,7 +99,7 @@ object CompetitionRetrievalService {
         return CompetitionResponse.Competitor(
             id = id!!,
             name = name,
-            description = description
+            description = description,
         )
     }
 
@@ -107,7 +109,41 @@ object CompetitionRetrievalService {
         id = id!!,
         name = name,
         matchIds = matches.map { it.id!! },
-        participantIds = participants.map { it.id!! }
+        competitorIds = competitors.map { it.id!! },
+        standingsTable = standingsTable(),
     )
+
+    private fun League.standingsTable() = standingsTable(matches.toSet(), competitors)
+    private fun Group.standingsTable() = standingsTable(matches.toSet(), competitors)
+
+    private fun standingsTable(matches: Set<Match>, competitors: List<Competitor>): StandingsTable {
+        val records = competitors
+            .map { it.standingsRecordIn(matches) }
+            .sortedBy { it.scores }
+            .sortedBy { it.wins }
+            .mapIndexed { i, r -> r.copy(place = i + 1) }
+        return StandingsTable(records)
+    }
+
+    private fun Competitor.standingsRecordIn(matches: Set<Match>): StandingsTable.Record {
+        val competitorsGroupMatches = matchParticipations
+            .map { it.match }
+            .filter { it.state == Match.State.ENDED }
+            .filter { it in matches }
+        return StandingsTable.Record(
+            place = -1,
+            competitorId = id!!,
+            wins = competitorsGroupMatches.count { won(it) },
+            scores = competitorsGroupMatches.sumByDouble { it.scoreOf(this) ?: 0.0 }
+        )
+    }
+
+    private fun Competitor.won(match: Match): Boolean {
+        return match.participations.maxByOrNull { it.score ?: Double.MIN_VALUE }?.competitor?.id == this.id
+    }
+
+    private fun Match.scoreOf(competitor: Competitor): Double? {
+        return participations.find { it.competitor == competitor }?.score
+    }
 
 }

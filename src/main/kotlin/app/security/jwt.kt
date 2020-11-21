@@ -18,7 +18,7 @@ fun JWTAuthenticationProvider.Configuration.configureJwt() {
     verifier(JWT.require(Algorithm.HMAC512(secret)).withIssuer(issuer).build())
     realm = issuer
     validate {
-        CompetitionGraph.session {
+        CompetitionGraph.readOnlyTransaction {
             load<User>(it.payload.getClaim("id").asLong(), 0)?.id?.let(::UserPrincipal)
         }
     }

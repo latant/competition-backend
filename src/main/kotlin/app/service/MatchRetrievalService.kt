@@ -21,7 +21,7 @@ import java.time.LocalDateTime
 object MatchRetrievalService {
 
     fun getMatchesBetween(startDateTime: LocalDateTime, endDateTime: LocalDateTime): List<MatchListElementResponse> {
-        CompetitionGraph.session {
+        CompetitionGraph.readOnlyTransaction {
             val filter = matchDateTimeBetweenFilter(startDateTime, endDateTime)
             val matches = loadAll<Match>(filter, depth = 2).sortedBy { it.dateTime }
             return matches.map { it.toMatchListElementDTO() }
@@ -33,7 +33,7 @@ object MatchRetrievalService {
         endDateTime: LocalDateTime,
         userPrincipal: UserPrincipal
     ): List<MatchListElementResponse> {
-        CompetitionGraph.session {
+        CompetitionGraph.readOnlyTransaction {
             val filter = matchDateTimeBetweenFilter(startDateTime, endDateTime)
             val matches = loadAll<Match>(filter, depth = 2)
                 .filter { it.editPermissionForUserWithId(userPrincipal.id) != NONE }
@@ -43,7 +43,7 @@ object MatchRetrievalService {
     }
 
     fun getMatch(matchId: Long, userPrincipal: UserPrincipal?): MatchResponse {
-        CompetitionGraph.session {
+        CompetitionGraph.readOnlyTransaction {
             val match = load<Match>(matchId, depth = 2) ?: RequestError.MatchNotFound()
             val editPermission = userPrincipal?.let { match.editPermissionForUserWithId(it.id) }
                 ?: NONE

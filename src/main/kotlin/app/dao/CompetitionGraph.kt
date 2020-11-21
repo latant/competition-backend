@@ -19,13 +19,15 @@ object CompetitionGraph {
     inline fun <R> transaction(type: Transaction.Type, action: Session.() -> R): R {
         session {
             val transaction = beginTransaction(type)
-            try {
-                val result = action()
-                transaction.commit()
-                return result
-            } catch (e: Throwable) {
-                transaction.rollback()
-                throw e
+            transaction.use {
+                try {
+                    val result = action()
+                    transaction.commit()
+                    return result
+                } catch (e: Throwable) {
+                    transaction.rollback()
+                    throw e
+                }
             }
         }
     }

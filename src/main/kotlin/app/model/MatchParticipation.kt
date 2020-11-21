@@ -8,7 +8,6 @@ import org.neo4j.ogm.annotation.Relationship.INCOMING
 abstract class MatchParticipation : Entity() {
 
     var score: Double? = null
-    val place: Int? = null
 
     @Relationship(PARTICIPATION_IN_MATCH)
     lateinit var match: Match

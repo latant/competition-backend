@@ -11,5 +11,5 @@
 
     <logger name="org.eclipse.jetty" level="INFO"/>
     <logger name="io.netty" level="INFO"/>
-    <logger name="org.neo4j.ogm.drivers.bolt.request.BoltRequest" level="DEBUG"/>
+    <logger name="org.neo4j" level="INFO"/>
 </configuration>

@@ -34,6 +34,7 @@ object CompetitionEditorService {
                 RequestError.UserCannotEditGroup()
             }
             update.name?.let { group.name = it }
+            save(group)
         }
     }
 

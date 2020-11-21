@@ -75,7 +75,7 @@ object CompetitionCreatorService {
             gs.rounds = (1..gs.roundCount).map { Round("Group stage Round $it", it, "") }
             gs.groups = groupsStructure.mapIndexed { gi, (gps, gsch) ->
                 Group("Group ${gi + 1}", "").also { g ->
-                    g.participants = gps
+                    g.competitors = gps
                     g.matches = gsch.flatMapIndexed { ri, pairs ->
                         pairs.map { (a, b) ->
                             Match(tournament.dateTime, "").also { m ->

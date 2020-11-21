@@ -12,7 +12,6 @@ fun resourceURL(name: String): URL = ResourcesToken::class.java.classLoader.getR
     ?: error("Resource '$name' could not be found")
 fun resourceFile(name: String) = File(resourceURL(name).toURI())
 fun resourceFileText(name: String) = resourceFile(name).readText()
-fun resourceCypher(name: String) = resourceFileText("cypher/$name.cyp")
 
 val ApplicationCall.userPrincipal get() = principal<UserPrincipal>()
 

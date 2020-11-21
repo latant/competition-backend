@@ -96,6 +96,20 @@ object MatchEditorService {
                 if (newState != ENDED) RequestError.MatchCannotBeRevivedFromEndedState()
             }
         }
+        if (state == ENDED) onEnded()
+    }
+
+    private fun Match.onEnded() {
+        // Resolves quotes for competitors
+        group?.let { g ->
+            if (g.matches.all { it.state == ENDED }) {
+                val standingsTable = CompetitionRetrievalService.standingsTable(group.matches.toSet(), group.competitors)
+                group.playoffsQuotes.forEach { q ->
+                    val competitorId = standingsTable.records.find { it.place == q.groupPlace }!!.competitorId
+                    q.competitor = group.competitors.find { it.id == competitorId }!!
+                }
+            }
+        }
     }
 
 }

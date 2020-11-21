@@ -5,7 +5,7 @@ import org.neo4j.ogm.annotation.Relationship
 import org.neo4j.ogm.annotation.Relationship.INCOMING
 
 @NodeEntity
-class Group(val name: String, val description: String) : Entity() {
+class Group(var name: String, val description: String) : Entity() {
 
     @Relationship(MATCH_IN_GROUP, direction = INCOMING)
     lateinit var matches: List<Match>

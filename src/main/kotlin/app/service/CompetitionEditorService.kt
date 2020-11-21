@@ -2,8 +2,10 @@ package app.service
 
 import app.dao.CompetitionGraph
 import app.dto.CompetitionUpdateRequest
+import app.dto.GroupUpdateRequest
 import app.error.RequestError
 import app.model.Competition
+import app.model.Group
 import app.security.UserPrincipal
 import atUTC
 import org.neo4j.ogm.session.load
@@ -22,6 +24,16 @@ object CompetitionEditorService {
             update.displayColor?.let { competition.displayColor = it }
             update.logo?.let { competition.logo = it }
             save(competition)
+        }
+    }
+
+    fun updateGroup(id: Long, update: GroupUpdateRequest, principal: UserPrincipal) {
+        CompetitionGraph.readWriteTransaction {
+            val group = load<Group>(id, depth = 3) ?: RequestError.GroupNotFound()
+            if (group.groupStage.competition.creator.id != principal.id) {
+                RequestError.UserCannotEditGroup()
+            }
+            update.name?.let { group.name = it }
         }
     }
 

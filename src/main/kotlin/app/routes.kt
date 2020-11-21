@@ -174,6 +174,15 @@ fun Routing.configureRoutes() {
             call.respond(OK)
         }
 
+        patch("groups/{id}") {
+            val id = call.parameters["id"]!!.toLong()
+            val userPrincipal = call.userPrincipal!!
+            val requestBody: GroupUpdateRequest = call.receive()
+            CompetitionEditorService.updateGroup(id, requestBody, userPrincipal)
+            val responseBody: GroupResponse = CompetitionRetrievalService.getGroup(id)
+            call.respond(responseBody)
+        }
+
     }
 
     authenticate(optional = true) {

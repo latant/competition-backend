@@ -17,10 +17,10 @@ import java.time.LocalDateTime
 object CompetitionRetrievalService {
 
     fun getCompetition(userPrincipal: UserPrincipal?, competitionId: Long): CompetitionResponse {
-        CompetitionGraph.readOnlyTransaction {
-            val competition = load<Competition>(competitionId, depth = 4) ?: RequestError.CompetitionNotFound()
-            return competition.toCompetitionDTO(userPrincipal?.let { it.id == competition.creator.id })
+        val competition = CompetitionGraph.readOnlyTransaction {
+            load<Competition>(competitionId, depth = 4) ?: RequestError.CompetitionNotFound()
         }
+        return competition.toCompetitionDTO(userPrincipal?.let { it.id == competition.creator.id })
     }
 
     fun getCompetitionsBetween(startDateTime: LocalDateTime, endDateTime: LocalDateTime): List<CompetitionListElementResponse> {
@@ -32,10 +32,10 @@ object CompetitionRetrievalService {
     }
 
     fun getGroup(groupId: Long): GroupResponse {
-        CompetitionGraph.readOnlyTransaction {
-            val group = load<Group>(groupId, depth = 3) ?: RequestError.GroupNotFound()
-            return group.toGroupDTO()
+        val group = CompetitionGraph.readOnlyTransaction {
+            load<Group>(groupId, depth = 3) ?: RequestError.GroupNotFound()
         }
+        return group.toGroupDTO()
     }
 
     private fun Competition.toCompetitionListElementDTO(): CompetitionListElementResponse = when (this) {

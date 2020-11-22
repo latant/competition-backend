@@ -17,11 +17,11 @@ import java.time.LocalDateTime
 object MatchRetrievalService {
 
     fun getMatchesBetween(startDateTime: LocalDateTime, endDateTime: LocalDateTime): List<MatchListElementResponse> {
-        CompetitionGraph.readOnlyTransaction {
+        val matches = CompetitionGraph.readOnlyTransaction {
             val filter = matchDateTimeBetweenFilter(startDateTime, endDateTime)
-            val matches = loadAll<Match>(filter, depth = 2).sortedBy { it.dateTime }
-            return matches.map { it.toMatchListElementDTO() }
+            loadAll<Match>(filter, depth = 2).sortedBy { it.dateTime }
         }
+        return matches.map { it.toMatchListElementDTO() }
     }
 
     fun getUsersMatchesBetween(
@@ -29,22 +29,21 @@ object MatchRetrievalService {
         endDateTime: LocalDateTime,
         userPrincipal: UserPrincipal
     ): List<MatchListElementResponse> {
-        CompetitionGraph.readOnlyTransaction {
+        val matches = CompetitionGraph.readOnlyTransaction {
             val filter = matchDateTimeBetweenFilter(startDateTime, endDateTime)
-            val matches = loadAll<Match>(filter, depth = 2)
+            loadAll<Match>(filter, depth = 2)
                 .filter { it.editPermissionForUserWithId(userPrincipal.id) != NONE }
                 .sortedBy { it.dateTime }
-            return matches.map { it.toMatchListElementDTO() }
         }
+        return matches.map { it.toMatchListElementDTO() }
     }
 
     fun getMatch(matchId: Long, userPrincipal: UserPrincipal?): MatchResponse {
-        CompetitionGraph.readOnlyTransaction {
-            val match = load<Match>(matchId, depth = 2) ?: RequestError.MatchNotFound()
-            val editPermission = userPrincipal?.let { match.editPermissionForUserWithId(it.id) }
-                ?: NONE
-            return match.toMatchDTO(editPermission)
+        val match = CompetitionGraph.readOnlyTransaction {
+            load<Match>(matchId, depth = 2) ?: RequestError.MatchNotFound()
         }
+        val editPermission = userPrincipal?.let { match.editPermissionForUserWithId(it.id) } ?: NONE
+        return match.toMatchDTO(editPermission)
     }
 
     private fun matchDateTimeBetweenFilter(startDateTime: LocalDateTime, endDateTime: LocalDateTime): Filters {

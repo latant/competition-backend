@@ -32,7 +32,8 @@ object CompetitionGraph {
         }
     }
 
-    inline fun <R> readOnlyTransaction(action: Session.() -> R) = transaction(Transaction.Type.READ_ONLY, action)
-    inline fun <R> readWriteTransaction(action: Session.() -> R) = transaction(Transaction.Type.READ_WRITE, action)
+
+    fun <R> readOnlyTransaction(action: Session.() -> R) = transaction(Transaction.Type.READ_ONLY, action)
+    fun <R> readWriteTransaction(action: Session.() -> R) = transaction(Transaction.Type.READ_WRITE, action)
 
 }

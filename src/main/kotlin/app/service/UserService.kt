@@ -29,14 +29,12 @@ object UserService {
 
     fun getAccessToken(userLogin: UserLoginRequest): AccessTokenResponse {
         userLogin.run {
-            CompetitionGraph.readOnlyTransaction {
-                val user = loadAll<User>(Filter(User::email.name, EQUALS, email)).firstOrNull()
-                    ?: RequestError.InvalidUsernameOrPassword()
-                if (password.hasHash(user.password)) {
-                    return AccessTokenResponse(user.principal().jwtToken())
-                } else {
-                    RequestError.InvalidUsernameOrPassword()
-                }
+            val user = CompetitionGraph.readOnlyTransaction {
+                loadAll<User>(Filter(User::email.name, EQUALS, email)).firstOrNull()
+            } ?: RequestError.InvalidUsernameOrPassword()
+            return when {
+                password.hasHash(user.password) -> AccessTokenResponse(user.principal().jwtToken())
+                else -> RequestError.InvalidUsernameOrPassword()
             }
         }
     }

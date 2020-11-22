@@ -30,6 +30,7 @@ dependencies {
     testImplementation(ktor("server-test-host"))
     implementation(ktor("client-cio"))
     implementation(ktor("websockets"))
+    implementation("commons-validator:commons-validator:1.7")
 
     implementation("org.pcollections:pcollections:3.1.4")
     implementation("org.neo4j:neo4j-ogm-core:3.2.17")

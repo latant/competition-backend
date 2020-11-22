@@ -12,10 +12,8 @@ import io.ktor.http.content.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
-import io.ktor.websocket.*
 import kotlinx.serialization.encodeToString
 import resourceFile
-import sendJson
 import startOfDay
 import toZonedDateTime
 import userPrincipal
@@ -30,6 +28,7 @@ fun Routing.configureRoutes() {
 
     post("/register") {
         val requestBody: UserRegistrationRequest = call.receive()
+        requestBody.validate()
         UserService.registerUser(requestBody)
         call.respond(OK)
     }
@@ -60,21 +59,22 @@ fun Routing.configureRoutes() {
     }
 
     get("/competitions/{id}/actual-matches-stream-view") {
-
+        TODO()
     }
 
     get("/competitions/{id}/standings-stream-view") {
-
+        TODO()
     }
 
     get("/groups/{id}/stream-view") {
-
+        TODO()
     }
 
     authenticate {
 
         post("/competitions") {
             val requestBody: CompetitionCreationRequest = call.receive()
+            requestBody.validate()
             val id = CompetitionCreatorService.createCompetition(call.userPrincipal!!, requestBody)
             val responseBody = IdResponse(id)
             call.respond(responseBody)
@@ -92,6 +92,7 @@ fun Routing.configureRoutes() {
             val id = call.parameters["id"]!!.toLong()
             val userPrincipal = call.userPrincipal!!
             val requestBody: CompetitionUpdateRequest = call.receive()
+            requestBody.validate()
             CompetitionEditorService.updateCompetition(id, requestBody, userPrincipal)
             val responseBody: CompetitionResponse = CompetitionRetrievalService.getCompetition(userPrincipal, id)
             call.respond(responseBody)
@@ -126,6 +127,7 @@ fun Routing.configureRoutes() {
             val id = call.parameters["id"]!!.toLong()
             val userPrincipal = call.userPrincipal!!
             val requestBody: GroupUpdateRequest = call.receive()
+            requestBody.validate()
             CompetitionEditorService.updateGroup(id, requestBody, userPrincipal)
             val responseBody: GroupResponse = CompetitionRetrievalService.getGroup(id)
             call.respond(responseBody)

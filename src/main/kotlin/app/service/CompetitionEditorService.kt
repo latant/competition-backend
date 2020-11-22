@@ -12,7 +12,7 @@ import org.neo4j.ogm.session.load
 
 object CompetitionEditorService {
 
-    suspend fun updateCompetition(id: Long, update: CompetitionUpdateRequest, principal: UserPrincipal) {
+    fun updateCompetition(id: Long, update: CompetitionUpdateRequest, principal: UserPrincipal) {
         CompetitionGraph.readWriteTransaction {
             val competition = load<Competition>(id, depth = 4) ?: RequestError.CompetitionNotFound()
             if (competition.creator.id != principal.id) {
@@ -23,11 +23,12 @@ object CompetitionEditorService {
             update.description?.let { competition.description = it }
             update.displayColor?.let { competition.displayColor = it }
             update.logo?.let { competition.logo = it }
+            update.styleSheet?.let { competition.styleSheet = it }
             save(competition)
         }
     }
 
-    suspend fun updateGroup(id: Long, update: GroupUpdateRequest, principal: UserPrincipal) {
+    fun updateGroup(id: Long, update: GroupUpdateRequest, principal: UserPrincipal) {
         CompetitionGraph.readWriteTransaction {
             val group = load<Group>(id, depth = 3) ?: RequestError.GroupNotFound()
             if (group.groupStage.competition.creator.id != principal.id) {

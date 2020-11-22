@@ -10,7 +10,8 @@ class Cup(
     override var logo: String?,
     override var dateTime: LocalDateTime,
     override var displayColor: String,
-    override val participantCount: Int
+    override val participantCount: Int,
+    override var styleSheet: String,
 ) : Competition() {
 
     val stage get() = stages.single() as PlayoffsStage

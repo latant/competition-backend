@@ -32,7 +32,7 @@ object CompetitionCreatorService {
         val participantsShuffled = league.competitors.shuffled()
         league.stage.rounds = scheduling.mapIndexed { i, pairs ->
             Round("Round ${i + 1}", i + 1, "").also { r ->
-                r.matches = pairs.mapIndexed { j, (a, b) ->
+                r.matches = pairs.map { (a, b) ->
                     Match(league.dateTime, "").also { m ->
                         m.competition = league
                         m.participations = listOf(a, b).map { pi ->
@@ -81,9 +81,9 @@ object CompetitionCreatorService {
                             Match(tournament.dateTime, "").also { m ->
                                 m.competition = tournament
                                 m.round = gs.rounds[ri]
-                                m.participations = listOf(a, b).map { pi ->
+                                m.participations = listOf(a, b).map { ci ->
                                     FixMatchParticipation().also { fmp ->
-                                        fmp.competitor = tournament.competitors[pi]
+                                        fmp.competitor = tournament.competitors[ci]
                                     }
                                 }
                             }
@@ -93,7 +93,7 @@ object CompetitionCreatorService {
             }
         }
         val playoffsFinalSource = CompetitionAlgorithmService
-            .playOffs(groupsStructure.map { it.first }, tournamentCreation.playOffParticipantCount)
+            .playOffs(groupsStructure.map { it.first }, tournamentCreation.playoffsCompetitorCount)
             as CompetitionAlgorithmService.PlayoffMatchSource.Match
         val playoffsStageRoundCount = playoffsFinalSource.roundOrdinal
         val playoffsStage = PlayoffsStage(name = "Play-offs", roundCount = playoffsStageRoundCount).also { pst ->
@@ -113,7 +113,8 @@ object CompetitionCreatorService {
         logo = null,
         dateTime = dateTime.atUTC(),
         displayColor = displayColor,
-        participantCount = competitors.size
+        participantCount = competitors.size,
+        styleSheet = styleSheet,
     )
 
     private fun CompetitionCreationRequest.Cup.toNode() = Cup(
@@ -122,7 +123,8 @@ object CompetitionCreatorService {
         dateTime = dateTime.atUTC(),
         logo = null,
         displayColor = displayColor,
-        participantCount = competitors.size
+        participantCount = competitors.size,
+        styleSheet = styleSheet,
     )
 
     private fun CompetitionCreationRequest.Tournament.toNode() = Tournament(
@@ -131,7 +133,8 @@ object CompetitionCreatorService {
         logo = null,
         dateTime = dateTime.atUTC(),
         displayColor = displayColor,
-        participantCount = competitors.size
+        participantCount = competitors.size,
+        styleSheet = styleSheet,
     )
 
     private fun createCupMatchOf(cupMatchSource: CompetitionAlgorithmService.CupMatchSource.Match, cup: Cup): Match {

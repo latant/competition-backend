@@ -59,18 +59,7 @@ fun Routing.configureRoutes() {
         call.respondHtml(OK, StreamingService.getHtmlForMatch(id))
     }
 
-    webSocket("/matches/{id}") {
-        val id = call.parameters["id"]!!.toLong()
-        StreamingService.feedMatchStream(id) {
-            outgoing.sendJson(it)
-        }
-    }
-
-    get("/competitions/{id}/matches-stream-view") {
-
-    }
-
-    webSocket("/competitions/{id}/matches") {
+    get("/competitions/{id}/actual-matches-stream-view") {
 
     }
 
@@ -78,22 +67,8 @@ fun Routing.configureRoutes() {
 
     }
 
-    webSocket("/leagues/{id}/standings") {
-        val id = call.parameters["id"]!!.toLong()
-        StreamingService.feedLeagueStandingsStream(id) {
-            outgoing.sendJson(it)
-        }
-    }
-
     get("/groups/{id}/stream-view") {
 
-    }
-
-    webSocket("/groups/{id}/standings") {
-        val id = call.parameters["id"]!!.toLong()
-        StreamingService.feedGroupStandingsStream(id) {
-            outgoing.sendJson(it)
-        }
     }
 
     authenticate {

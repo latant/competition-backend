@@ -1,6 +1,7 @@
 package app.service
 
 import app.dao.CompetitionGraph
+import app.dto.ActualMatchesStreamFrame
 import app.dto.GroupStandingsStreamFrame
 import app.dto.LeagueStandingsStreamFrame
 import app.dto.MatchStreamFrame
@@ -35,35 +36,6 @@ object StreamingService {
                 }
                 script(src = "/static/match_stream.js") {}
             }
-        }
-    }
-
-    suspend fun feedMatchStream(id: Long, sendFrame: suspend (MatchStreamFrame) -> Unit) {
-        SubscriptionService.subscribeForMatch(id) { m ->
-            val frame = MatchStreamFrame(
-                participants = m.participations.map { MatchStreamFrame.Participant(it.competitor?.name, it.score) },
-            )
-            sendFrame(frame)
-        }
-    }
-
-    suspend fun feedGroupStandingsStream(id: Long, sendFrame: suspend (GroupStandingsStreamFrame) -> Unit) {
-        SubscriptionService.subscribeForGroup(id) { g ->
-            val frame = GroupStandingsStreamFrame(
-                name = g.name,
-                standingsTable = CompetitionRetrievalService.standingsTable(g.matches.toSet(), g.competitors),
-            )
-            sendFrame(frame)
-        }
-    }
-
-    suspend fun feedLeagueStandingsStream(id: Long, sendFrame: suspend (LeagueStandingsStreamFrame) -> Unit) {
-        SubscriptionService.subscribeForLeague(id) { l ->
-            val frame = LeagueStandingsStreamFrame(
-                name = l.name,
-                standingsTable = CompetitionRetrievalService.standingsTable(l.matches.toSet(), l.competitors),
-            )
-            sendFrame(frame)
         }
     }
 

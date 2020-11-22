@@ -12,6 +12,7 @@ class Match(
 ): Entity() {
 
     var state = State.NOT_STARTED_YET
+    var endDateTime: LocalDateTime? = null
 
     @Relationship(MATCH_IN_COMPETITION)
     lateinit var competition: Competition

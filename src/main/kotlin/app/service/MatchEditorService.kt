@@ -12,10 +12,17 @@ import app.model.Match.State.*
 import app.model.User
 import app.security.UserPrincipal
 import atUTC
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.neo4j.ogm.cypher.ComparisonOperator
 import org.neo4j.ogm.cypher.Filter
 import org.neo4j.ogm.session.load
 import org.neo4j.ogm.session.loadAll
+import utcNow
+import java.time.LocalDateTime
+import kotlin.coroutines.suspendCoroutine
 
 object MatchEditorService {
 
@@ -63,7 +70,6 @@ object MatchEditorService {
                 match.dateTime = it.atUTC()
             }
             save(match)
-            SubscriptionService.matchUpdated(match)
         }
     }
 
@@ -101,9 +107,8 @@ object MatchEditorService {
     }
 
     private suspend fun Match.onEnded() {
+        endDateTime = utcNow()
         group?.let { g ->
-            // Notifies group stream views
-            SubscriptionService.groupUpdated(g)
             // Resolves quotes for competitors
             if (g.matches.all { it.state == ENDED }) {
                 val standingsTable = CompetitionRetrievalService.standingsTable(g.matches.toSet(), g.competitors)
@@ -112,10 +117,6 @@ object MatchEditorService {
                     q.competitor = g.competitors.find { it.id == competitorId }!!
                 }
             }
-        }
-
-        (competition as? League)?.let { l ->
-            SubscriptionService.leagueUpdated(l)
         }
     }
 

@@ -12,9 +12,9 @@ import org.neo4j.ogm.session.load
 
 object CompetitionEditorService {
 
-    fun updateCompetition(id: Long, update: CompetitionUpdateRequest, principal: UserPrincipal) {
+    suspend fun updateCompetition(id: Long, update: CompetitionUpdateRequest, principal: UserPrincipal) {
         CompetitionGraph.readWriteTransaction {
-            val competition = load<Competition>(id, depth = 1) ?: RequestError.CompetitionNotFound()
+            val competition = load<Competition>(id, depth = 4) ?: RequestError.CompetitionNotFound()
             if (competition.creator.id != principal.id) {
                 RequestError.UserCannotEditCompetition()
             }
@@ -34,7 +34,6 @@ object CompetitionEditorService {
                 RequestError.UserCannotEditGroup()
             }
             update.name?.let { group.name = it }
-            SubscriptionService.groupUpdated(group)
             save(group)
         }
     }

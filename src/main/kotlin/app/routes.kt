@@ -8,7 +8,6 @@ import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.html.*
 import io.ktor.http.HttpStatusCode.Companion.OK
-import io.ktor.http.cio.websocket.*
 import io.ktor.http.content.*
 import io.ktor.request.*
 import io.ktor.response.*
@@ -16,6 +15,7 @@ import io.ktor.routing.*
 import io.ktor.websocket.*
 import kotlinx.serialization.encodeToString
 import resourceFile
+import sendJson
 import startOfDay
 import toZonedDateTime
 import userPrincipal
@@ -62,7 +62,7 @@ fun Routing.configureRoutes() {
     webSocket("/matches/{id}") {
         val id = call.parameters["id"]!!.toLong()
         StreamingService.feedMatchStream(id) {
-            outgoing.send(Frame.Text(json.encodeToString(it)))
+            outgoing.sendJson(it)
         }
     }
 
@@ -78,16 +78,22 @@ fun Routing.configureRoutes() {
 
     }
 
-    webSocket("/competitions/{id}/standings") {
-
+    webSocket("/leagues/{id}/standings") {
+        val id = call.parameters["id"]!!.toLong()
+        StreamingService.feedLeagueStandingsStream(id) {
+            outgoing.sendJson(it)
+        }
     }
 
     get("/groups/{id}/stream-view") {
 
     }
 
-    webSocket("/groups/{id}") {
-
+    webSocket("/groups/{id}/standings") {
+        val id = call.parameters["id"]!!.toLong()
+        StreamingService.feedGroupStandingsStream(id) {
+            outgoing.sendJson(it)
+        }
     }
 
     authenticate {

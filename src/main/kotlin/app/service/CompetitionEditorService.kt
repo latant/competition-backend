@@ -27,13 +27,14 @@ object CompetitionEditorService {
         }
     }
 
-    fun updateGroup(id: Long, update: GroupUpdateRequest, principal: UserPrincipal) {
+    suspend fun updateGroup(id: Long, update: GroupUpdateRequest, principal: UserPrincipal) {
         CompetitionGraph.readWriteTransaction {
             val group = load<Group>(id, depth = 3) ?: RequestError.GroupNotFound()
             if (group.groupStage.competition.creator.id != principal.id) {
                 RequestError.UserCannotEditGroup()
             }
             update.name?.let { group.name = it }
+            SubscriptionService.groupUpdated(group)
             save(group)
         }
     }

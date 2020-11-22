@@ -6,6 +6,7 @@ import app.dto.MatchResponse
 import app.dto.MatchResponse.EditPermission.*
 import app.dto.MatchUpdateRequest
 import app.error.RequestError
+import app.model.League
 import app.model.Match
 import app.model.Match.State.*
 import app.model.User
@@ -51,7 +52,7 @@ object MatchEditorService {
 
     suspend fun updateMatch(id: Long, update: MatchUpdateRequest, userPrincipal: UserPrincipal) {
         CompetitionGraph.readWriteTransaction {
-            val match = load<Match>(id, depth = 4) ?: RequestError.MatchNotFound()
+            val match = load<Match>(id, depth = 5) ?: RequestError.MatchNotFound()
             val editPermission = editPermissionForUserWithId(match, userPrincipal.id)
             if (editPermission == NONE) RequestError.UserCannotEditMatch()
             update.description?.let { match.description = it }
@@ -62,7 +63,7 @@ object MatchEditorService {
                 match.dateTime = it.atUTC()
             }
             save(match)
-            MatchSubscriptionService.matchUpdated(match)
+            SubscriptionService.matchUpdated(match)
         }
     }
 
@@ -80,7 +81,7 @@ object MatchEditorService {
         }
     }
 
-    private fun Match.updateState(newState: Match.State) {
+    private suspend fun Match.updateState(newState: Match.State) {
         when (state) {
             NOT_STARTED_YET -> {
                 if (newState == ENDED) RequestError.MatchCannotBeEndedBeforeBeingStarted()
@@ -99,16 +100,22 @@ object MatchEditorService {
         if (state == ENDED) onEnded()
     }
 
-    private fun Match.onEnded() {
-        // Resolves quotes for competitors
+    private suspend fun Match.onEnded() {
         group?.let { g ->
+            // Notifies group stream views
+            SubscriptionService.groupUpdated(g)
+            // Resolves quotes for competitors
             if (g.matches.all { it.state == ENDED }) {
-                val standingsTable = CompetitionRetrievalService.standingsTable(group.matches.toSet(), group.competitors)
-                group.playoffsQuotes.forEach { q ->
+                val standingsTable = CompetitionRetrievalService.standingsTable(g.matches.toSet(), g.competitors)
+                g.playoffsQuotes.forEach { q ->
                     val competitorId = standingsTable.records.find { it.place == q.groupPlace }!!.competitorId
-                    q.competitor = group.competitors.find { it.id == competitorId }!!
+                    q.competitor = g.competitors.find { it.id == competitorId }!!
                 }
             }
+        }
+
+        (competition as? League)?.let { l ->
+            SubscriptionService.leagueUpdated(l)
         }
     }
 

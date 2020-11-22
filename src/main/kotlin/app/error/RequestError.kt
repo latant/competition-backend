@@ -23,6 +23,7 @@ enum class RequestError(val statusCode: HttpStatusCode, val message: String = ""
     UnstartedMatchScoreCannotBeModified(BadRequest),
     GroupNotFound(NotFound),
     UserCannotEditGroup(Forbidden),
+    LeagueNotFound(NotFound),
 
     ;
 

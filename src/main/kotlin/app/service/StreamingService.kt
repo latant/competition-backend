@@ -1,10 +1,6 @@
 package app.service
 
 import app.dao.CompetitionGraph
-import app.dto.ActualMatchesStreamFrame
-import app.dto.GroupStandingsStreamFrame
-import app.dto.LeagueStandingsStreamFrame
-import app.dto.MatchStreamFrame
 import app.error.RequestError
 import app.model.Match
 import kotlinx.html.HTML

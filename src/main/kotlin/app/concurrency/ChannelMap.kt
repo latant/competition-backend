@@ -12,7 +12,7 @@ class ChannelMap<K, E> {
 
     private val channels = AtomicReference<PMap<K, PSet<Channel<E>>>>(HashTreePMap.empty())
 
-    inner class Entry(val key: K, val channel: Channel<E>): Channel<E> by channel {
+    inner class Entry(private val key: K, private val channel: Channel<E>): Channel<E> by channel {
         override fun close(cause: Throwable?): Boolean {
             channels.getAndUpdate {
                 val subscriptions = it[key]?.minus(this) ?: HashTreePSet.empty()

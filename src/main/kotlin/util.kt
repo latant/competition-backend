@@ -1,10 +1,6 @@
 import app.security.UserPrincipal
-import app.serialization.JsonConfig
 import io.ktor.application.*
 import io.ktor.auth.*
-import io.ktor.http.cio.websocket.*
-import kotlinx.coroutines.channels.SendChannel
-import kotlinx.serialization.encodeToString
 import java.io.File
 import java.net.URL
 import java.time.LocalDateTime
@@ -39,7 +35,3 @@ val IntRange.length get() = last - first + 1
 fun String.toZonedDateTime(): ZonedDateTime = ZonedDateTime.parse(this)
 fun utcNow() = ZonedDateTime.now().atUTC()
 fun LocalDateTime.startOfDay(): LocalDateTime = withHour(0).withMinute(0).withSecond(0).withNano(0)
-
-suspend inline fun <reified T> SendChannel<Frame>.sendJson(content: T) {
-    send(Frame.Text(JsonConfig.json.encodeToString(content)))
-}

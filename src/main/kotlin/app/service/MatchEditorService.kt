@@ -6,23 +6,16 @@ import app.dto.MatchResponse
 import app.dto.MatchResponse.EditPermission.*
 import app.dto.MatchUpdateRequest
 import app.error.RequestError
-import app.model.League
 import app.model.Match
 import app.model.Match.State.*
 import app.model.User
 import app.security.UserPrincipal
 import atUTC
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.neo4j.ogm.cypher.ComparisonOperator
 import org.neo4j.ogm.cypher.Filter
 import org.neo4j.ogm.session.load
 import org.neo4j.ogm.session.loadAll
 import utcNow
-import java.time.LocalDateTime
-import kotlin.coroutines.suspendCoroutine
 
 object MatchEditorService {
 
@@ -57,7 +50,7 @@ object MatchEditorService {
         }
     }
 
-    suspend fun updateMatch(id: Long, update: MatchUpdateRequest, userPrincipal: UserPrincipal) {
+    fun updateMatch(id: Long, update: MatchUpdateRequest, userPrincipal: UserPrincipal) {
         CompetitionGraph.readWriteTransaction {
             val match = load<Match>(id, depth = 5) ?: RequestError.MatchNotFound()
             val editPermission = editPermissionForUserWithId(match, userPrincipal.id)
@@ -87,7 +80,7 @@ object MatchEditorService {
         }
     }
 
-    private suspend fun Match.updateState(newState: Match.State) {
+    private fun Match.updateState(newState: Match.State) {
         when (state) {
             NOT_STARTED_YET -> {
                 if (newState == ENDED) RequestError.MatchCannotBeEndedBeforeBeingStarted()
@@ -106,7 +99,7 @@ object MatchEditorService {
         if (state == ENDED) onEnded()
     }
 
-    private suspend fun Match.onEnded() {
+    private fun Match.onEnded() {
         endDateTime = utcNow()
         group?.let { g ->
             // Resolves quotes for competitors

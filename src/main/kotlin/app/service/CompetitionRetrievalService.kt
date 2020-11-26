@@ -39,9 +39,9 @@ object CompetitionRetrievalService {
     }
 
     private fun Competition.toCompetitionListElementDTO(): CompetitionListElementResponse = when (this) {
-        is League -> CompetitionListElementResponse.League(id!!, name)
-        is Cup -> CompetitionListElementResponse.Cup(id!!, name)
-        is Tournament -> CompetitionListElementResponse.Tournament(id!!, name)
+        is League -> CompetitionListElementResponse.League(id!!, name, dateTime)
+        is Cup -> CompetitionListElementResponse.Cup(id!!, name, dateTime)
+        is Tournament -> CompetitionListElementResponse.Tournament(id!!, name, dateTime)
         else -> error("Unknown competition type: ${this::class.qualifiedName}")
     }
 

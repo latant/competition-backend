@@ -15,6 +15,7 @@ data class MatchListElementResponse(
     val competition: Competition,
     val round: Round,
     val group: Group?,
+    val editPermission: MatchResponse.EditPermission?,
 ) {
 
     // A match participant which is maybe not known yet

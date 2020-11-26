@@ -39,13 +39,6 @@ fun Routing.configureRoutes() {
         call.respond(responseBody)
     }
 
-    get("/matches") {
-        val (startDateTime, endDateTime) = call.request.startDateTimeAndEndDateTimeLenientRequestParams()
-        val responseBody: List<MatchListElementResponse> = MatchRetrievalService
-            .getMatchesBetween(startDateTime, endDateTime)
-        call.respond(responseBody)
-    }
-
     get("/competitions") {
         val (startDateTime, endDateTime) = call.request.startDateTimeAndEndDateTimeLenientRequestParams()
         val responseBody: List<CompetitionListElementResponse> = CompetitionRetrievalService
@@ -149,6 +142,14 @@ fun Routing.configureRoutes() {
             val matchId = call.parameters["id"]!!.toLong()
             val userPrincipal = call.userPrincipal
             val responseBody: MatchResponse = MatchRetrievalService.getMatch(matchId, userPrincipal)
+            call.respond(responseBody)
+        }
+
+        get("/matches") {
+            val (startDateTime, endDateTime) = call.request.startDateTimeAndEndDateTimeLenientRequestParams()
+            val userPrincipal = call.userPrincipal
+            val responseBody: List<MatchListElementResponse> = MatchRetrievalService
+                .getMatchesBetween(startDateTime, endDateTime, userPrincipal)
             call.respond(responseBody)
         }
 

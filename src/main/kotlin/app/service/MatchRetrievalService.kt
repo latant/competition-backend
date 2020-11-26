@@ -16,12 +16,16 @@ import java.time.LocalDateTime
 
 object MatchRetrievalService {
 
-    fun getMatchesBetween(startDateTime: LocalDateTime, endDateTime: LocalDateTime): List<MatchListElementResponse> {
+    fun getMatchesBetween(
+        startDateTime: LocalDateTime,
+        endDateTime: LocalDateTime,
+        userPrincipal: UserPrincipal?
+    ): List<MatchListElementResponse> {
         val matches = CompetitionGraph.readOnlyTransaction {
             val filter = matchDateTimeBetweenFilter(startDateTime, endDateTime)
             loadAll<Match>(filter, depth = 2).sortedBy { it.dateTime }
         }
-        return matches.map { it.toMatchListElementDTO() }
+        return matches.map { it.toMatchListElementDTO(userPrincipal) }
     }
 
     fun getUsersMatchesBetween(
@@ -29,13 +33,7 @@ object MatchRetrievalService {
         endDateTime: LocalDateTime,
         userPrincipal: UserPrincipal
     ): List<MatchListElementResponse> {
-        val matches = CompetitionGraph.readOnlyTransaction {
-            val filter = matchDateTimeBetweenFilter(startDateTime, endDateTime)
-            loadAll<Match>(filter, depth = 2)
-                .filter { it.editPermissionForUserWithId(userPrincipal.id) != NONE }
-                .sortedBy { it.dateTime }
-        }
-        return matches.map { it.toMatchListElementDTO() }
+        return getMatchesBetween(startDateTime, endDateTime, userPrincipal).filter { it.editPermission != NONE }
     }
 
     fun getMatch(matchId: Long, userPrincipal: UserPrincipal?): MatchResponse {
@@ -52,7 +50,7 @@ object MatchRetrievalService {
         return startDateTimeFilter.and(endDateTimeFilter)
     }
 
-    private fun Match.toMatchListElementDTO() = MatchListElementResponse(
+    private fun Match.toMatchListElementDTO(userPrincipal: UserPrincipal?) = MatchListElementResponse(
         id = id!!,
         dateTime = dateTime,
         state = state,
@@ -60,6 +58,7 @@ object MatchRetrievalService {
         competition = competition.toMatchListElementCompetitionDTO(),
         round = round.toMatchListElementRoundDTO(),
         group = group?.toMatchListElementGroupDTO(),
+        editPermission = userPrincipal?.let { editPermissionForUserWithId(it.id) }
     )
 
     private fun MatchParticipation.toMatchListElementParticipantDTO(): MatchListElementResponse.Participant {

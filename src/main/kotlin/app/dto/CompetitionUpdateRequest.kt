@@ -10,7 +10,8 @@ class CompetitionUpdateRequest(
     val name: String? = null,
     val description: String? = null,
     val logo: String? = null,
-    val dateTime: @Contextual ZonedDateTime? = null,
+    val startDateTime: @Contextual ZonedDateTime? = null,
+    val endDateTime: @Contextual ZonedDateTime? = null,
     val displayColor: String? = null,
     val styleSheet: String? = null,
 ) {

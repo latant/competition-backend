@@ -19,7 +19,8 @@ object CompetitionEditorService {
                 RequestError.UserCannotEditCompetition()
             }
             update.name?.let { competition.name = it }
-            update.dateTime?.let { competition.startDateTime = it.atUTC() }
+            update.startDateTime?.let { competition.startDateTime = it.atUTC() }
+            update.endDateTime?.let { competition.endDateTime = it.atUTC() }
             update.description?.let { competition.description = it }
             update.displayColor?.let { competition.displayColor = it }
             update.logo?.let { competition.logo = it }

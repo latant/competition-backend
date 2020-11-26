@@ -52,7 +52,7 @@ object MatchEditorService {
 
     fun updateMatch(id: Long, update: MatchUpdateRequest, userPrincipal: UserPrincipal) {
         CompetitionGraph.readWriteTransaction {
-            val match = load<Match>(id, depth = 5) ?: RequestError.MatchNotFound()
+            val match = load<Match>(id, depth = 2) ?: RequestError.MatchNotFound()
             val editPermission = editPermissionForUserWithId(match, userPrincipal.id)
             if (editPermission == NONE) RequestError.UserCannotEditMatch()
             update.description?.let { match.description = it }

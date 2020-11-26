@@ -24,7 +24,7 @@ object CompetitionRetrievalService {
     }
 
     fun getCompetitionsBetween(startDateTime: LocalDateTime, endDateTime: LocalDateTime): List<CompetitionListElementResponse> {
-        val startDateTimeFilter = Filter(Competition::startDateTime.name, ComparisonOperator.GREATER_THAN_EQUAL, startDateTime)
+        val startDateTimeFilter = Filter(Competition::endDateTime.name, ComparisonOperator.GREATER_THAN_EQUAL, startDateTime)
         val endDateTimeFilter = Filter(Competition::startDateTime.name, ComparisonOperator.LESS_THAN_EQUAL, endDateTime)
         val filter = startDateTimeFilter.and(endDateTimeFilter)
         return CompetitionGraph.readOnlyTransaction { loadAll<Competition>(filter) }

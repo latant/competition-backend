@@ -1,5 +1,6 @@
 package app.dto
 
+import app.model.Match
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -57,6 +58,7 @@ sealed class CompetitionResponse {
     @Serializable
     data class Match(
         val id: Long,
+        val state: app.model.Match.State,
         val dateTime: @Contextual LocalDateTime,
         val participants: List<Participant>
     ) {

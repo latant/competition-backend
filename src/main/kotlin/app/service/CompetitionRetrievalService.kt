@@ -80,6 +80,7 @@ object CompetitionRetrievalService {
         id = id!!,
         dateTime = dateTime,
         participants = participations.map { it.toMatchParticipantDTO() },
+        state = state,
     )
 
     private fun MatchParticipation.toMatchParticipantDTO(): CompetitionResponse.Match.Participant {

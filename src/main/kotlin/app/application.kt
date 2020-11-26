@@ -1,6 +1,7 @@
 package app
 
 import app.error.configureStatusPages
+import app.security.configureCORS
 import app.security.configureJwt
 import app.serialization.JsonConfig
 import io.ktor.application.*
@@ -19,6 +20,8 @@ fun Application.configureApplication() {
     install(CallLogging)
     install(ContentNegotiation) { json(JsonConfig.json) }
     install(Authentication) { jwt { configureJwt() } }
+    install(CORS) { configureCORS() }
+
     routing { configureRoutes() }
 
 }

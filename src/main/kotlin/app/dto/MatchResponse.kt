@@ -8,7 +8,7 @@ import java.time.LocalDateTime
 
 // Response that contains all necessary data for displaying a page of a match
 @Serializable
-data class MatchResponse constructor(
+data class MatchResponse(
     val id: Long,
     val dateTime: @Contextual LocalDateTime,
     val description: String,

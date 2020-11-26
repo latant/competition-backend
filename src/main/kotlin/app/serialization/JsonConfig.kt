@@ -1,6 +1,7 @@
 package app.serialization
 
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
@@ -10,6 +11,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.SerializersModuleBuilder
 import kotlinx.serialization.modules.contextual
+import java.lang.Exception
 import java.time.LocalDateTime
 import java.time.ZonedDateTime
 
@@ -29,8 +31,16 @@ object JsonConfig {
         contextual(object : KSerializer<T> {
             override val descriptor: SerialDescriptor get() =
                 PrimitiveSerialDescriptor(T::class.qualifiedName!!, PrimitiveKind.STRING)
-            override fun deserialize(decoder: Decoder) = fromString(decoder.decodeString())
-            override fun serialize(encoder: Encoder, value: T) = encoder.encodeString(toString(value))
+            override fun deserialize(decoder: Decoder): T {
+                try {
+                    return fromString(decoder.decodeString())
+                } catch (e: Throwable) {
+                    throw SerializationException(e.message)
+                }
+            }
+            override fun serialize(encoder: Encoder, value: T) {
+                encoder.encodeString(toString(value))
+            }
         })
     }
 

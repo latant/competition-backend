@@ -1,7 +1,16 @@
 package app.validation
 
+import app.error.RequestError
 import org.apache.commons.validator.routines.EmailValidator
 import java.util.regex.Pattern
+
+inline fun validations(action: () -> Unit) {
+    try {
+        action()
+    } catch (e: Throwable) {
+        RequestError.InvalidRequestBody(e.message)
+    }
+}
 
 inline fun String.requireValidEmail(lazyMessage: () -> Any) {
    require(EmailValidator.getInstance().isValid(this), lazyMessage)

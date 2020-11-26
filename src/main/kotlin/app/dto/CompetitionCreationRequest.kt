@@ -25,7 +25,7 @@ sealed class CompetitionCreationRequest {
         val roundCount: Int? = null,
         val styleSheet: String = "",
     ) : CompetitionCreationRequest() {
-        override fun validate() {
+        override fun validate() = validations {
             name.requireNotBlank { "Name must not be blank" }
             displayColor.requireValidCssHexColor { "The display color must be a valid css color in hex format" }
             competitors.requireMultiple { "There must be at least 2 competitors" }
@@ -44,7 +44,7 @@ sealed class CompetitionCreationRequest {
         val competitors: List<Competitor>,
         val styleSheet: String = "",
     ) : CompetitionCreationRequest() {
-        override fun validate() {
+        override fun validate() = validations {
             name.requireNotBlank { "Name must not be blank" }
             displayColor.requireValidCssHexColor { "The display color must be a valid css color in hex format" }
             competitors.requireMultiple { "There must be at least 2 competitors" }
@@ -64,7 +64,7 @@ sealed class CompetitionCreationRequest {
         val playoffsCompetitorCount: Int,
         val styleSheet: String = "",
     ) : CompetitionCreationRequest() {
-        override fun validate() {
+        override fun validate() = validations {
             name.requireNotBlank { "Name must not be blank" }
             displayColor.requireValidCssHexColor { "The display color must be a valid css color in hex format" }
             competitors.requireMultiple { "There must be at least 2 competitors" }

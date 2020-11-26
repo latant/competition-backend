@@ -24,8 +24,9 @@ enum class RequestError(val statusCode: HttpStatusCode, val message: String = ""
     GroupNotFound(NotFound),
     UserCannotEditGroup(Forbidden),
     LeagueNotFound(NotFound),
+    InvalidRequestBody(BadRequest),
 
     ;
 
-    operator fun invoke(): Nothing = throw RequestErrorException(this)
+    operator fun invoke(message: String? = null): Nothing = throw RequestErrorException(this, message)
 }

@@ -15,7 +15,7 @@ class CompetitionUpdateRequest(
     val styleSheet: String? = null,
 ) {
 
-    fun validate() {
+    fun validate() = validations {
         name?.requireNotBlank { "Name must not be blank" }
         displayColor?.requireValidCssHexColor { "The display color must be a valid css color in hex format" }
     }

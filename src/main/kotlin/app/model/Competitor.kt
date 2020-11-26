@@ -9,10 +9,10 @@ class Competitor(
     val description: String,
 ) : Entity() {
 
-    @Relationship(PARTICIPANT_IN_COMPETITION)
+    @Relationship(COMPETITOR_IN_COMPETITION)
     lateinit var competition: Competition
 
-    @Relationship(PARTICIPATE_IN_MATCH_PARTICIPATION)
+    @Relationship(COMPETITOR_OF_MATCH_PARTICIPATION)
     lateinit var matchParticipations: List<MatchParticipation>
 
 }

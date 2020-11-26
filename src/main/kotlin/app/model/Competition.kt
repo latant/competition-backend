@@ -19,7 +19,7 @@ abstract class Competition : Entity() {
 
     val state = State.NOT_STARTED_YET
 
-    @Relationship(PARTICIPANT_IN_COMPETITION, direction = INCOMING)
+    @Relationship(COMPETITOR_IN_COMPETITION, direction = INCOMING)
     lateinit var competitors: List<Competitor>
 
     @Relationship(MATCH_IN_COMPETITION, direction = INCOMING)

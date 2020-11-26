@@ -12,7 +12,7 @@ abstract class MatchParticipation : Entity() {
     @Relationship(PARTICIPATION_IN_MATCH)
     lateinit var match: Match
 
-    @Relationship(PARTICIPATE_IN_MATCH_PARTICIPATION, direction = INCOMING)
+    @Relationship(COMPETITOR_OF_MATCH_PARTICIPATION, direction = INCOMING)
     var competitor: Competitor? = null
 
 }

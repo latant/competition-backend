@@ -36,7 +36,7 @@ fun main() {
             }
         )
         val competitions = json.decodeFromString<List<CompetitionListElementResponse>>(
-            client.get("http://127.0.0.1:8080/competitions?startDateTime=${startDateTime}&endDateTime=${endDateTime}"))
+            client.get("http://127.0.0.1:8080/competitions?minDateTime=${startDateTime}&maxDateTime=${endDateTime}"))
         println(accessToken)
         println(competitions)
         val leagueListElement = competitions.filterIsInstance<CompetitionListElementResponse.League>().first()

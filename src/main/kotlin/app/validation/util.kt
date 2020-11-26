@@ -13,7 +13,7 @@ inline fun validations(action: () -> Unit) {
 }
 
 inline fun String.requireValidEmail(lazyMessage: () -> Any) {
-   require(EmailValidator.getInstance().isValid(this), lazyMessage)
+   require(EmailValidator.getInstance(true, true).isValid(this), lazyMessage)
 }
 
 inline fun String.requireNotBlank(lazyMessage: () -> Any) {

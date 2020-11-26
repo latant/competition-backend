@@ -44,10 +44,10 @@ object MatchRetrievalService {
         return match.toMatchDTO(editPermission)
     }
 
-    private fun matchDateTimeBetweenFilter(startDateTime: LocalDateTime, endDateTime: LocalDateTime): Filters {
-        val startDateTimeFilter = Filter(Match::dateTime.name, ComparisonOperator.GREATER_THAN_EQUAL, startDateTime)
-        val endDateTimeFilter = Filter(Match::dateTime.name, ComparisonOperator.LESS_THAN_EQUAL, endDateTime)
-        return startDateTimeFilter.and(endDateTimeFilter)
+    private fun matchDateTimeBetweenFilter(minDateTime: LocalDateTime, maxDateTime: LocalDateTime): Filters {
+        val minDateTimeFilter = Filter(Match::dateTime.name, ComparisonOperator.GREATER_THAN_EQUAL, minDateTime)
+        val maxDateTimeFilter = Filter(Match::dateTime.name, ComparisonOperator.LESS_THAN_EQUAL, maxDateTime)
+        return minDateTimeFilter.and(maxDateTimeFilter)
     }
 
     private fun Match.toMatchListElementDTO(userPrincipal: UserPrincipal?) = MatchListElementResponse(

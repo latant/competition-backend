@@ -23,10 +23,10 @@ object CompetitionRetrievalService {
         return competition.toCompetitionDTO(userPrincipal?.let { it.id == competition.creator.id })
     }
 
-    fun getCompetitionsBetween(startDateTime: LocalDateTime, endDateTime: LocalDateTime): List<CompetitionListElementResponse> {
-        val startDateTimeFilter = Filter(Competition::endDateTime.name, ComparisonOperator.GREATER_THAN_EQUAL, startDateTime)
-        val endDateTimeFilter = Filter(Competition::startDateTime.name, ComparisonOperator.LESS_THAN_EQUAL, endDateTime)
-        val filter = startDateTimeFilter.and(endDateTimeFilter)
+    fun getCompetitionsBetween(minDateTime: LocalDateTime, maxDateTime: LocalDateTime): List<CompetitionListElementResponse> {
+        val minDateTimeFilter = Filter(Competition::endDateTime.name, ComparisonOperator.GREATER_THAN_EQUAL, minDateTime)
+        val maxDateTimeFilter = Filter(Competition::startDateTime.name, ComparisonOperator.LESS_THAN_EQUAL, maxDateTime)
+        val filter = minDateTimeFilter.and(maxDateTimeFilter)
         return CompetitionGraph.readOnlyTransaction { loadAll<Competition>(filter) }
             .map { it.toCompetitionListElementDTO() }
     }

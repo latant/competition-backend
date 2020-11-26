@@ -165,12 +165,12 @@ fun Routing.configureRoutes() {
 
 
 fun ApplicationRequest.startDateTimeAndEndDateTimeLenientRequestParams(): Pair<LocalDateTime, LocalDateTime> {
-    val startDateTime = queryParameters["startDateTime"]?.toZonedDateTime()?.atUTC()
-    val endDateTime = queryParameters["endDateTime"]?.toZonedDateTime()?.atUTC()
+    val minDateTime = queryParameters["minDateTime"]?.toZonedDateTime()?.atUTC()
+    val maxDateTime = queryParameters["maxDateTime"]?.toZonedDateTime()?.atUTC()
     return when {
-        startDateTime != null && endDateTime != null -> startDateTime to endDateTime
-        startDateTime != null -> startDateTime to startDateTime.plusDays(1)
-        endDateTime != null -> endDateTime.minusDays(1) to endDateTime
+        minDateTime != null && maxDateTime != null -> minDateTime to maxDateTime
+        minDateTime != null -> minDateTime to minDateTime.plusDays(1)
+        maxDateTime != null -> maxDateTime.minusDays(1) to maxDateTime
         else -> utcNow().startOfDay().let { it to it.plusDays(1) }
     }
 }

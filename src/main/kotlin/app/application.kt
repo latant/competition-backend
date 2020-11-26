@@ -24,6 +24,9 @@ fun Application.configureApplication() {
     install(CORS) { configureCORS() }
     install(CallId) { configureCallIds() }
 
-    routing { configureRoutes() }
+    routing {
+        trace { application.log.trace(it.buildText()) }
+        configureRoutes()
+    }
 
 }

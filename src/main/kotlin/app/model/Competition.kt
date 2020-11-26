@@ -11,7 +11,8 @@ abstract class Competition : Entity() {
     abstract var name: String
     abstract var description: String
     abstract var logo: String?
-    abstract var dateTime: LocalDateTime
+    abstract var startDateTime: LocalDateTime
+    abstract var endDateTime: LocalDateTime
     abstract var displayColor: String
     abstract val participantCount: Int
     abstract var styleSheet: String

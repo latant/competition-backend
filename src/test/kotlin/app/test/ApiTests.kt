@@ -68,7 +68,8 @@ class ApiTests {
                 authenticate(accessToken1)
                 jsonBody<CompetitionCreationRequest>(CompetitionCreationRequest.League(
                     name = "My League",
-                    dateTime = ZonedDateTime.now(),
+                    startDateTime = ZonedDateTime.now(),
+                    endDateTime = ZonedDateTime.now().plusDays(2),
                     competitors = listOf(
                         CompetitionCreationRequest.Competitor("Eagles"),
                         CompetitionCreationRequest.Competitor("Lions"),
@@ -99,7 +100,8 @@ class ApiTests {
                 authenticate(accessToken1)
                 jsonBody<CompetitionCreationRequest>(CompetitionCreationRequest.Cup(
                     name = "My Cup",
-                    dateTime = ZonedDateTime.now(),
+                    startDateTime = ZonedDateTime.now(),
+                    endDateTime = ZonedDateTime.now().plusDays(2),
                     competitors = listOf(
                         CompetitionCreationRequest.Competitor("Eagles"),
                         CompetitionCreationRequest.Competitor("Lions"),
@@ -130,7 +132,8 @@ class ApiTests {
                 authenticate(accessToken1)
                 jsonBody<CompetitionCreationRequest>(CompetitionCreationRequest.Tournament(
                     name = "My Tournament",
-                    dateTime = ZonedDateTime.now(),
+                    startDateTime = ZonedDateTime.now(),
+                    endDateTime = ZonedDateTime.now().plusDays(2),
                     groupCount = 2,
                     playoffsCompetitorCount = 4,
                     competitors = listOf(

@@ -18,7 +18,8 @@ sealed class CompetitionCreationRequest {
     @SerialName("League")
     data class League(
         val name: String,
-        val dateTime: @Contextual ZonedDateTime,
+        val startDateTime: @Contextual ZonedDateTime,
+        val endDateTime: @Contextual ZonedDateTime,
         val displayColor: String = "#0000ff",
         val description: String = "",
         val competitors: List<Competitor>,
@@ -38,7 +39,8 @@ sealed class CompetitionCreationRequest {
     @SerialName("Cup")
     data class Cup(
         val name: String,
-        val dateTime: @Contextual ZonedDateTime,
+        val startDateTime: @Contextual ZonedDateTime,
+        val endDateTime: @Contextual ZonedDateTime,
         val displayColor: String = "#0000ff",
         val description: String = "",
         val competitors: List<Competitor>,
@@ -56,7 +58,8 @@ sealed class CompetitionCreationRequest {
     @SerialName("Tournament")
     data class Tournament(
         val name: String,
-        val dateTime: @Contextual ZonedDateTime,
+        val startDateTime: @Contextual ZonedDateTime,
+        val endDateTime: @Contextual ZonedDateTime,
         val displayColor: String = "#0000ff",
         val description: String = "",
         val competitors: List<Competitor>,

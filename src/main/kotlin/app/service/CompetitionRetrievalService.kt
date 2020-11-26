@@ -24,8 +24,8 @@ object CompetitionRetrievalService {
     }
 
     fun getCompetitionsBetween(startDateTime: LocalDateTime, endDateTime: LocalDateTime): List<CompetitionListElementResponse> {
-        val startDateTimeFilter = Filter(Competition::dateTime.name, ComparisonOperator.GREATER_THAN_EQUAL, startDateTime)
-        val endDateTimeFilter = Filter(Competition::dateTime.name, ComparisonOperator.LESS_THAN_EQUAL, endDateTime)
+        val startDateTimeFilter = Filter(Competition::startDateTime.name, ComparisonOperator.GREATER_THAN_EQUAL, startDateTime)
+        val endDateTimeFilter = Filter(Competition::startDateTime.name, ComparisonOperator.LESS_THAN_EQUAL, endDateTime)
         val filter = startDateTimeFilter.and(endDateTimeFilter)
         return CompetitionGraph.readOnlyTransaction { loadAll<Competition>(filter) }
             .map { it.toCompetitionListElementDTO() }
@@ -39,9 +39,9 @@ object CompetitionRetrievalService {
     }
 
     private fun Competition.toCompetitionListElementDTO(): CompetitionListElementResponse = when (this) {
-        is League -> CompetitionListElementResponse.League(id!!, name, dateTime)
-        is Cup -> CompetitionListElementResponse.Cup(id!!, name, dateTime)
-        is Tournament -> CompetitionListElementResponse.Tournament(id!!, name, dateTime)
+        is League -> CompetitionListElementResponse.League(id!!, name, startDateTime)
+        is Cup -> CompetitionListElementResponse.Cup(id!!, name, startDateTime)
+        is Tournament -> CompetitionListElementResponse.Tournament(id!!, name, startDateTime)
         else -> error("Unknown competition type: ${this::class.qualifiedName}")
     }
 
@@ -54,6 +54,8 @@ object CompetitionRetrievalService {
             rounds = stage.rounds.map { it.toRoundDTO() },
             editable = editable,
             standingsTable = standingsTable(),
+            startDateTime = startDateTime,
+            endDateTime = endDateTime,
         )
         is Cup -> CompetitionResponse.Cup(
             id = id!!,
@@ -62,6 +64,8 @@ object CompetitionRetrievalService {
             competitors = competitors.map { it.toCompetitorDTO() },
             rounds = stage.rounds.map { it.toRoundDTO() },
             editable = editable,
+            startDateTime = startDateTime,
+            endDateTime = endDateTime,
         )
         is Tournament -> CompetitionResponse.Tournament(
             id = id!!,
@@ -72,6 +76,8 @@ object CompetitionRetrievalService {
             playoffsStageRounds = playoffsStage.rounds.map { it.toRoundDTO() },
             groups = groupStage.groups.map { it.toTournamentGroupDTO() },
             editable = editable,
+            startDateTime = startDateTime,
+            endDateTime = endDateTime,
         )
         else -> error("Unknown competition type: ${this::class.qualifiedName}")
     }

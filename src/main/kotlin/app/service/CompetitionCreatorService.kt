@@ -33,7 +33,7 @@ object CompetitionCreatorService {
         league.stage.rounds = scheduling.mapIndexed { i, pairs ->
             Round("Round ${i + 1}", i + 1, "").also { r ->
                 r.matches = pairs.map { (a, b) ->
-                    Match(league.dateTime, "").also { m ->
+                    Match(league.startDateTime, "").also { m ->
                         m.competition = league
                         m.participations = listOf(a, b).map { pi ->
                             FixMatchParticipation().also { fmp ->
@@ -78,7 +78,7 @@ object CompetitionCreatorService {
                     g.competitors = gps
                     g.matches = gsch.flatMapIndexed { ri, pairs ->
                         pairs.map { (a, b) ->
-                            Match(tournament.dateTime, "").also { m ->
+                            Match(tournament.startDateTime, "").also { m ->
                                 m.competition = tournament
                                 m.round = gs.rounds[ri]
                                 m.participations = listOf(a, b).map { ci ->
@@ -111,7 +111,8 @@ object CompetitionCreatorService {
         name = name,
         description = description,
         logo = null,
-        dateTime = dateTime.atUTC(),
+        startDateTime = startDateTime.atUTC(),
+        endDateTime = endDateTime.atUTC(),
         displayColor = displayColor,
         participantCount = competitors.size,
         styleSheet = styleSheet,
@@ -120,7 +121,8 @@ object CompetitionCreatorService {
     private fun CompetitionCreationRequest.Cup.toNode() = Cup(
         name = name,
         description = description,
-        dateTime = dateTime.atUTC(),
+        startDateTime = startDateTime.atUTC(),
+        endDateTime = endDateTime.atUTC(),
         logo = null,
         displayColor = displayColor,
         participantCount = competitors.size,
@@ -131,14 +133,15 @@ object CompetitionCreatorService {
         name = name,
         description = description,
         logo = null,
-        dateTime = dateTime.atUTC(),
+        startDateTime = startDateTime.atUTC(),
+        endDateTime = endDateTime.atUTC(),
         displayColor = displayColor,
         participantCount = competitors.size,
         styleSheet = styleSheet,
     )
 
     private fun createCupMatchOf(cupMatchSource: CompetitionAlgorithmService.CupMatchSource.Match, cup: Cup): Match {
-        return Match(cup.dateTime, "").also { m ->
+        return Match(cup.startDateTime, "").also { m ->
             m.round = cup.stage.rounds[cupMatchSource.roundOrdinal - 1]
             m.competition = cup
             m.participations = listOf(cupMatchSource.home, cupMatchSource.away).map { cms ->
@@ -163,7 +166,7 @@ object CompetitionCreatorService {
     }
 
     private fun createPlayoffMatchOf(playoffMatchSource: CompetitionAlgorithmService.PlayoffMatchSource.Match, tournament: Tournament): Match {
-        return Match(tournament.dateTime, "").also { m ->
+        return Match(tournament.startDateTime, "").also { m ->
             m.round = tournament.playoffsStage.rounds[playoffMatchSource.roundOrdinal - 1]
             m.competition = tournament
             m.participations = listOf(playoffMatchSource.home, playoffMatchSource.away).map { pms ->

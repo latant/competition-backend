@@ -19,6 +19,8 @@ sealed class CompetitionResponse {
         val rounds: List<Round>,
         val editable: Boolean?,
         val standingsTable: StandingsTable,
+        val startDateTime: @Contextual LocalDateTime,
+        val endDateTime: @Contextual LocalDateTime,
     ) : CompetitionResponse()
 
     @Serializable
@@ -30,6 +32,8 @@ sealed class CompetitionResponse {
         val competitors: List<Competitor>,
         val rounds: List<Round>,
         val editable: Boolean?,
+        val startDateTime: @Contextual LocalDateTime,
+        val endDateTime: @Contextual LocalDateTime,
     ) : CompetitionResponse()
 
     @Serializable
@@ -43,6 +47,8 @@ sealed class CompetitionResponse {
         val playoffsStageRounds: List<Round>,
         val groups: List<Group>,
         val editable: Boolean?,
+        val startDateTime: @Contextual LocalDateTime,
+        val endDateTime: @Contextual LocalDateTime,
     ) : CompetitionResponse() {
         @Serializable
         data class Group(

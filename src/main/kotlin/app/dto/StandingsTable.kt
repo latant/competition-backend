@@ -10,7 +10,9 @@ data class StandingsTable(val records: List<Record>) {
         val place: Int,
         val competitorId: Long,
         val wins: Int,
-        val scores: Double
+        val scores: Double,
+        val matchesCount: Int,
+        val matchesPlayed: Int,
     )
 
 }

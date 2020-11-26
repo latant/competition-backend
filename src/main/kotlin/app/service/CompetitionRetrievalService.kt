@@ -168,15 +168,15 @@ object CompetitionRetrievalService {
     }
 
     private fun Competitor.standingsRecordIn(matches: Set<Match>): StandingsTable.Record {
-        val competitorsGroupMatches = matchParticipations
-            .map { it.match }
-            .filter { it.state == Match.State.ENDED }
-            .filter { it in matches }
+        val competitorsMatches = matchParticipations.map { it.match }.filter { it in matches }
+        val competitorsEndedMatches = competitorsMatches.filter { it.state == Match.State.ENDED }
         return StandingsTable.Record(
             place = -1,
             competitorId = id!!,
-            wins = competitorsGroupMatches.count { won(it) },
-            scores = competitorsGroupMatches.sumByDouble { it.scoreOf(this) ?: 0.0 }
+            wins = competitorsEndedMatches.count { won(it) },
+            scores = competitorsEndedMatches.sumByDouble { it.scoreOf(this) ?: 0.0 },
+            matchesCount = competitorsMatches.size,
+            matchesPlayed = competitorsEndedMatches.size,
         )
     }
 

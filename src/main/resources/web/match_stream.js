@@ -1,31 +1,20 @@
 const host = location.host;
-const matchId = location.pathname.split('/')[2];
-
+const id = location.pathname.split('/')[2];
 const participantElements = document.getElementsByClassName("participant");
 
-const run = () => {
-
-    const ws = new WebSocket(`ws://${host}/matches/${matchId}`);
-
-    ws.onopen = () => {
-        console.log("Opened connection...")
-    }
-
-    ws.onmessage = ({data}) => {
-        const match = JSON.parse(data);
-        console.log(match);
-        match.participants.forEach((p, i) => {
-            const element = participantElements[i];
-            element.children[0].innerHTML = p.name;
-            element.children[1].innerHTML = p.score;
+const refresh = () => {
+    fetch(`http://${host}/matches/${id}`)
+        .then(resp => resp.json())
+        .then(data => {
+            console.log(data);
+            return data;
         })
-    };
+        .then(match => match.participants.forEach((p, i) => {
+            participantElements[i].children[0].innerHTML = p.competitorName;
+            participantElements[i].children[1].innerHTML = p.score;
+        }))
+        .catch(err => console.log(err))
+}
 
-    ws.onclose = (event) => {
-        console.log("Closed connection.");
-        window.setTimeout(run, 1000);
-    };
-
-};
-
-window.onload = run;
+refresh();
+setInterval(refresh, 1000)

@@ -1,0 +1,50 @@
+html, body {
+    margin: 0;
+    height: 100%;
+}
+body {
+    display: grid;
+    grid-template-columns: 25% 75%;
+}
+.logo-container {
+    grid-column: 1 / 2;
+}
+.participants {
+    grid-column: 2 / 3;
+    display: flex;
+    flex-direction: column;
+}
+.participant {
+    flex-grow: 1;
+    display: grid;
+    grid-template-columns: 65% 35%;
+}
+.participant-name {
+    grid-column: 1 / 2;
+
+    border-radius: 10vh 0 0 10vh;
+    padding-left: 5%;
+    background-color: #000066;
+    font-size: 25.5vh;
+    color: #ddd;
+    height: 95%;
+    margin-top: 2vh;
+
+    display: flex;
+    align-items: center;
+}
+.participant-score {
+    grid-column: 2 / 3;
+
+    border-radius: 0 10vh 10vh 0;
+    padding-right: 5%;
+    background-color: #aaa;
+    font-size: 25.5vh;
+    color: #000;
+    height: 95%;
+    margin-top: 2vh;
+
+    display: flex;
+    align-items: center;
+    justify-content: end;
+}

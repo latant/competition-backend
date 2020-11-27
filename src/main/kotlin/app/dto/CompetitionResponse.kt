@@ -1,6 +1,5 @@
 package app.dto
 
-import app.model.Match
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

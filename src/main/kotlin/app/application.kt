@@ -25,7 +25,7 @@ fun Application.configureApplication() {
     install(CallId) { configureCallIds() }
 
     routing {
-        trace { application.log.trace(it.buildText()) }
+        //trace { application.log.trace(it.buildText()) }
         configureRoutes()
     }
 

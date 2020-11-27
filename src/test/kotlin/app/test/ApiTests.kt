@@ -155,10 +155,10 @@ class ApiTests {
             }.response
             assertEquals(OK, postResponse.status())
             val idResponse = postResponse.body<IdResponse>().also(::assertNotNull)!!
-            //val getResponse = handleRequest(Get, "/competitions/${idResponse.id}").response
-            //assertEquals(OK, getResponse.status())
-            //assertNotNull(getResponse.body<CompetitionResponse>())
-            //assert(getResponse.body<CompetitionResponse>() is CompetitionResponse.Tournament)
+            val getResponse = handleRequest(Get, "/competitions/${idResponse.id}").response
+            assertEquals(OK, getResponse.status())
+            assertNotNull(getResponse.body<CompetitionResponse>())
+            assert(getResponse.body<CompetitionResponse>() is CompetitionResponse.Tournament)
 
             tournamentId = idResponse.id
         }

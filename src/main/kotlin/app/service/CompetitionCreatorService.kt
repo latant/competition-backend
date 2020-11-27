@@ -92,6 +92,11 @@ object CompetitionCreatorService {
                 }
             }
         }
+        tournament.matches = groupStage.groups.flatMap { it.matches }
+        val mp = tournament.matches.flatMap { it.participations }
+        tournament.competitors.forEach { competitor ->
+            competitor.matchParticipations = mp.filter { it.competitor == competitor }
+        }
         val playoffsFinalSource = CompetitionAlgorithmService
             .playOffs(groupsStructure.map { it.first }, tournamentCreation.playoffsCompetitorCount)
             as CompetitionAlgorithmService.PlayoffMatchSource.Match

@@ -15,7 +15,9 @@ object StreamingService {
                 link(rel = "stylesheet", href = "/static/match_stream.css")
             }
             body {
-                div("logo-container") { }
+                div("logo-container") {
+                    img(src = match.competition.logo) {  }
+                }
                 div("participants") {
                     match.participations.forEach { p ->
                         div("participant") {

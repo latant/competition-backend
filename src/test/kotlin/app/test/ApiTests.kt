@@ -16,6 +16,7 @@ import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.contrib.java.lang.system.EnvironmentVariables
+import resourceFileText
 import java.security.SecureRandom
 import java.time.ZonedDateTime
 import kotlin.test.assertEquals
@@ -79,12 +80,16 @@ class ApiTests {
                         CompetitionCreationRequest.Competitor("Tigers"),
                         CompetitionCreationRequest.Competitor("Hawks"),
                         CompetitionCreationRequest.Competitor("Sharks"),
-                    )
+                    ),
                 ))
             }.response
             assertEquals(OK, postResponse.status())
             val idResponse = postResponse.body<IdResponse>().also(::assertNotNull)!!
             val getResponse = handleRequest(Get, "/competitions/${idResponse.id}").response
+            handleRequest(Patch, "/competitions/${idResponse.id}") {
+                authenticate(accessToken1)
+                jsonBody(CompetitionUpdateRequest(logo = resourceFileText("logo.txt")))
+            }.response.let { assertEquals(OK, it.status()) }
             assertEquals(OK, getResponse.status())
             assertNotNull(getResponse.body<CompetitionResponse>())
             assert(getResponse.body<CompetitionResponse>() is CompetitionResponse.League)

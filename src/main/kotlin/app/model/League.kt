@@ -11,7 +11,7 @@ class League(
     override var startDateTime: LocalDateTime,
     override var endDateTime: LocalDateTime,
     override var displayColor: String,
-    override val participantCount: Int,
+    override val competitorCount: Int,
     override var styleSheet: String,
 ) : Competition() {
 

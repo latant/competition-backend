@@ -26,7 +26,7 @@ object CompetitionCreatorService {
         val league = leagueCreation.toNode()
         league.creator = creator
         league.competitors = leagueCreation.competitors.map { it.toNode() }
-        val scheduling = CompetitionAlgorithmService.leagueScheduling(league.participantCount).shuffled()
+        val scheduling = CompetitionAlgorithmService.leagueScheduling(league.competitorCount).shuffled()
         league.stages = listOf(LeagueStage(scheduling.size))
             .let { s -> leagueCreation.roundCount?.let { s.take(it) } ?: s }
         val participantsShuffled = league.competitors.shuffled()
@@ -119,7 +119,7 @@ object CompetitionCreatorService {
         startDateTime = startDateTime.atUTC(),
         endDateTime = endDateTime.atUTC(),
         displayColor = displayColor,
-        participantCount = competitors.size,
+        competitorCount = competitors.size,
         styleSheet = styleSheet,
     )
 
@@ -130,7 +130,7 @@ object CompetitionCreatorService {
         endDateTime = endDateTime.atUTC(),
         logo = null,
         displayColor = displayColor,
-        participantCount = competitors.size,
+        competitorCount = competitors.size,
         styleSheet = styleSheet,
     )
 
@@ -141,7 +141,7 @@ object CompetitionCreatorService {
         startDateTime = startDateTime.atUTC(),
         endDateTime = endDateTime.atUTC(),
         displayColor = displayColor,
-        participantCount = competitors.size,
+        competitorCount = competitors.size,
         styleSheet = styleSheet,
     )
 

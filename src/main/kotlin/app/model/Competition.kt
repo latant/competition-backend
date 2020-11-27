@@ -14,7 +14,7 @@ abstract class Competition : Entity() {
     abstract var startDateTime: LocalDateTime
     abstract var endDateTime: LocalDateTime
     abstract var displayColor: String
-    abstract val participantCount: Int
+    abstract val competitorCount: Int
     abstract var styleSheet: String
 
     val state = State.NOT_STARTED_YET

@@ -8,6 +8,12 @@ body {
 }
 .logo-container {
     grid-column: 1 / 2;
+    display: flex;
+    align-items: center;
+}
+.logo-container > img {
+    max-width: 100%;
+    max-height: 100%
 }
 .participants {
     grid-column: 2 / 3;
@@ -38,7 +44,7 @@ body {
 
     border-radius: 0 10vh 10vh 0;
     padding-right: 5%;
-    background-color: #aaa;
+    background-color: #8dd;
     font-size: 25.5vh;
     color: #000;
     height: 95%;

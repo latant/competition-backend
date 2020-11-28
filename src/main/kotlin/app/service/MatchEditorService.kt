@@ -47,6 +47,7 @@ object MatchEditorService {
                 RequestError.UserCannotEditMatch()
             }
             match.editors = match.editors?.filter { it.email != editorEmail }
+            save(match)
         }
     }
 

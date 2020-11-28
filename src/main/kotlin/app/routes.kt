@@ -75,7 +75,8 @@ fun Routing.configureRoutes() {
     }
 
     get("/groups/{id}/stream-view") {
-        TODO()
+        val id = call.parameters["id"]!!.toLong()
+        call.respondHtml(OK, StreamingService.getHtmlForGroup(id))
     }
 
     authenticate {

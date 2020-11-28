@@ -6,6 +6,7 @@ import app.model.*
 import kotlinx.html.*
 import org.neo4j.ogm.session.load
 import utcNow
+import java.nio.file.attribute.GroupPrincipal
 import java.time.LocalDateTime
 
 object StreamingService {
@@ -73,6 +74,57 @@ object StreamingService {
                                     text(p.score?.toString() ?: "-")
                                 }
                             }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fun getHtmlForGroup(id: Long): HTML.() -> Unit {
+        val group = CompetitionGraph.readOnlyTransaction { load<Group>(id, depth = 2) ?: RequestError.GroupNotFound() }
+        val competition = group.groupStage.competition
+        return competition.streamHtml("group") {
+            div("group-name") {
+                text("${competition.name} - ${group.name}")
+            }
+            div("group-competition-logo") {
+                img(src = competition.logo)
+            }
+            table("group-table") {
+                tr("group-table-head") {
+                    th(classes = "group-table-head-place") {
+                        text("#")
+                    }
+                    th(classes = "group-table-head-name") {
+
+                    }
+                    th(classes = "group-table-head-matches-won") {
+                        text("W")
+                    }
+                    th(classes = "group-table-head-scores") {
+                        text("S")
+                    }
+                    th(classes = "group-table-head-matches-played") {
+                        text("M")
+                    }
+                }
+                CompetitionRetrievalService.standingsTable(group.matches.toSet(), group.competitors).records.forEach { r ->
+                    tr("group-table-record") {
+                        td(classes = "group-table-record-place") {
+                            text(r.place)
+                        }
+                        td(classes = "group-table-record-name") {
+                            text(r.competitorName)
+                        }
+                        td(classes = "group-table-record-matches-won") {
+                            text(r.wins)
+                        }
+                        td(classes = "group-table-record-scores") {
+                            text(r.scores)
+                        }
+                        td(classes = "group-table-record-matches-played") {
+                            text("${r.matchesPlayed}/${r.matchesCount}")
                         }
                     }
                 }

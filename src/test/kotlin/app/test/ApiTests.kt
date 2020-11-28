@@ -129,6 +129,12 @@ class ApiTests {
             assertNotNull(getResponse.body<CompetitionResponse>())
             assert(getResponse.body<CompetitionResponse>() is CompetitionResponse.Cup)
 
+            val patchResponse = handleRequest(Patch, "/competitions/${idResponse.id}") {
+                authenticate(accessToken1)
+                jsonBody(CompetitionUpdateRequest(logo = "https://github.githubassets.com/images/modules/logos_page/Octocat.png"))
+            }.response
+            assertEquals(OK, patchResponse.status())
+
             cupId = idResponse.id
         }
     }
@@ -162,6 +168,12 @@ class ApiTests {
             assertEquals(OK, getResponse.status())
             assertNotNull(getResponse.body<CompetitionResponse>())
             assert(getResponse.body<CompetitionResponse>() is CompetitionResponse.Tournament)
+
+            val patchResponse = handleRequest(Patch, "/competitions/${idResponse.id}") {
+                authenticate(accessToken1)
+                jsonBody(CompetitionUpdateRequest(logo = "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Kotlin-logo.svg/1200px-Kotlin-logo.svg.png"))
+            }.response
+            assertEquals(OK, patchResponse.status())
 
             tournamentId = idResponse.id
         }

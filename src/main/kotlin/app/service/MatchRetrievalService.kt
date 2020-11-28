@@ -12,6 +12,7 @@ import org.neo4j.ogm.cypher.Filter
 import org.neo4j.ogm.cypher.Filters
 import org.neo4j.ogm.session.load
 import org.neo4j.ogm.session.loadAll
+import utcNow
 import java.time.LocalDateTime
 
 object MatchRetrievalService {
@@ -42,6 +43,22 @@ object MatchRetrievalService {
         }
         val editPermission = userPrincipal?.let { match.editPermissionForUserWithId(it.id) } ?: NONE
         return match.toMatchDTO(editPermission)
+    }
+
+    fun getActualMatchesOfCompetition(competitionId: Long, userPrincipal: UserPrincipal?): List<MatchListElementResponse> {
+        val now = utcNow()
+        val fiveAgo = now.minusMinutes(5)
+        val fiveLater = now.plusMinutes(5)
+        val competition = CompetitionGraph.readOnlyTransaction {
+            load<Competition>(competitionId, depth = 2) ?: RequestError.CompetitionNotFound()
+        }
+        return competition.matches
+            .filter {
+                it.state == Match.State.ONGOING ||
+                    it.dateTime in (now..fiveLater) ||
+                    it.endDateTime in (fiveAgo..now)
+            }
+            .map { it.toMatchListElementDTO(userPrincipal) }
     }
 
     private fun matchDateTimeBetweenFilter(minDateTime: LocalDateTime, maxDateTime: LocalDateTime): Filters {

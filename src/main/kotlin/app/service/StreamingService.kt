@@ -5,6 +5,8 @@ import app.error.RequestError
 import app.model.*
 import kotlinx.html.*
 import org.neo4j.ogm.session.load
+import utcNow
+import java.time.LocalDateTime
 
 object StreamingService {
 
@@ -21,7 +23,7 @@ object StreamingService {
                             text(p.competitor?.name ?: "-")
                         }
                         div("match-participant-score") {
-                            p.score?.let { text(it) }
+                            text(p.score?.toString() ?: "-")
                         }
                     }
                 }
@@ -38,6 +40,43 @@ object StreamingService {
             is Cup -> competition.cupStandingsHtml()
             is Tournament -> competition.tournamentStandingsHtml()
             else -> error("Unsupported competition type '${competition::class.simpleName}")
+        }
+    }
+
+    fun getHtmlForActualMatches(competitionId: Long): HTML.() -> Unit {
+        val now = utcNow()
+        val fiveAgo = now.minusMinutes(5)
+        val fiveLater = now.plusMinutes(5)
+        val competition = CompetitionGraph.readOnlyTransaction {
+            load<Competition>(competitionId, depth = 3) ?: RequestError.CompetitionNotFound()
+        }
+        val actualMatches = competition.matches.filter {
+            it.state == Match.State.ONGOING || it.dateTime in (now..fiveLater) ||
+                (it.endDateTime?.let { it in (fiveAgo..now) } ?: false)
+        }
+        return competition.streamHtml("actual-matches") {
+            div("actual-matches-competition-name") {
+                text(competition.name)
+            }
+            div("actual-matches-competition-logo") {
+                img(src = competition.logo)
+            }
+            div("actual-matches") {
+                actualMatches.forEach { m ->
+                    div("actual-match") {
+                        m.participations.forEach { p ->
+                            div("actual-match-participant") {
+                                div("actual-match-participant-name") {
+                                    text(p.competitor?.name ?: "-")
+                                }
+                                div("actual-match-participant-score") {
+                                    text(p.score?.toString() ?: "-")
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -108,7 +147,7 @@ object StreamingService {
                                 text(p.competitor?.name ?: "-")
                             }
                             div("cup-standing-match-participant-score") {
-                                p.score?.let { text(it) }
+                                text(p.score?.toString() ?: "-")
                             }
                         }
                     }

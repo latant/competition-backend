@@ -65,7 +65,8 @@ fun Routing.configureRoutes() {
     }
 
     get("/competitions/{id}/actual-matches/stream-view") {
-        TODO()
+        val id = call.parameters["id"]!!.toLong()
+        call.respondHtml(OK, StreamingService.getHtmlForActualMatches(id))
     }
 
     get("/competitions/{id}/standings/stream-view") {
@@ -164,6 +165,14 @@ fun Routing.configureRoutes() {
             val userPrincipal = call.userPrincipal
             val responseBody: List<MatchListElementResponse> = MatchRetrievalService
                 .getMatchesBetween(startDateTime, endDateTime, userPrincipal)
+            call.respond(responseBody)
+        }
+
+        get("/competition/{id}/actual-matches") {
+            val id = call.parameters["id"]!!.toLong()
+            val userPrincipal = call.userPrincipal
+            val responseBody: List<MatchListElementResponse> = MatchRetrievalService
+                .getActualMatchesOfCompetition(id, userPrincipal)
             call.respond(responseBody)
         }
 

@@ -180,11 +180,17 @@ class ApiTests {
             assertEquals(28 + 7 + ((6 * 2) + 3), getMatchesResponse.body<List<MatchListElementResponse>>()!!.size)
 
             val matchIds = getMatchesResponse.body<List<MatchListElementResponse>>()!!.map { it.id }
-            matchIds.map { matchId ->
+            matchIds.forEach { matchId ->
                 val getMatchResponse = handleRequest(Get, "/matches/$matchId").response
                 assertEquals(OK, getMatchResponse.status())
                 assertNotNull(getMatchResponse.body<MatchResponse>())
                 assertEquals(MatchResponse.EditPermission.NONE, getMatchResponse.body<MatchResponse>()!!.editPermission)
+
+                val patchMatchResponse = handleRequest(Patch, "/matches/$matchId") {
+                    authenticate(accessToken1)
+                    jsonBody(MatchUpdateRequest(dateTime = ZonedDateTime.now().plusMinutes(5)))
+                }.response
+                assertEquals(OK, patchMatchResponse.status())
             }
         }
     }

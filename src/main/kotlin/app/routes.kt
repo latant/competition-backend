@@ -55,7 +55,7 @@ fun Routing.configureRoutes() {
     get("/competitions/{id}/stylesheet-base") {
         val id = call.parameters["id"]!!.toLong()
         val displayColor = CompetitionRetrievalService.getCompetitionDisplayColor(id)
-        val stylesheet = "body { background-color: $displayColor }"
+        val stylesheet = ".stream-frame { background-color: $displayColor }"
         call.respondText(stylesheet, contentType = ContentType.Text.CSS)
     }
 

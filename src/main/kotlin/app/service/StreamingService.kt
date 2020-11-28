@@ -6,8 +6,6 @@ import app.model.*
 import kotlinx.html.*
 import org.neo4j.ogm.session.load
 import utcNow
-import java.nio.file.attribute.GroupPrincipal
-import java.time.LocalDateTime
 
 object StreamingService {
 
@@ -264,15 +262,17 @@ object StreamingService {
         }
     }
 
-    private fun Competition.streamHtml(name: String, body: BODY.() -> Unit): HTML.() -> Unit {
+    private fun Competition.streamHtml(name: String, content: DIV.() -> Unit): HTML.() -> Unit {
         return {
             head {
                 link(rel = "stylesheet", href = "/static/stream/$name.css")
                 link(rel = "stylesheet", href = "/competitions/${this@streamHtml.id}/stylesheet-base")
                 link(rel = "stylesheet", href = "/competitions/${this@streamHtml.id}/stylesheet")
             }
-            body("$name-frame") {
-                body()
+            body {
+                div("$name-frame stream-frame") {
+                    content()
+                }
                 script(src = "/static/stream/$name.js") {}
             }
         }

@@ -203,6 +203,7 @@ object CompetitionRetrievalService {
         return StandingsTable.Record(
             place = -1,
             competitorId = id!!,
+            competitorName = name,
             wins = competitorsEndedMatches.count { won(it) },
             scores = competitorsEndedMatches.sumByDouble { it.scoreOf(this) ?: 0.0 },
             matchesCount = competitorsMatches.size,

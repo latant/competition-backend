@@ -64,12 +64,13 @@ fun Routing.configureRoutes() {
         call.respondHtml(OK, StreamingService.getHtmlForMatch(id))
     }
 
-    get("/competitions/{id}/actual-matches-stream-view") {
+    get("/competitions/{id}/actual-matches/stream-view") {
         TODO()
     }
 
-    get("/competitions/{id}/standings-stream-view") {
-        TODO()
+    get("/competitions/{id}/standings/stream-view") {
+        val id = call.parameters["id"]!!.toLong()
+        call.respondHtml(OK, StreamingService.getHtmlForCompetitionStandings(id))
     }
 
     get("/groups/{id}/stream-view") {

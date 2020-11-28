@@ -1,3 +1,6 @@
+setInterval(() => location.reload(), 1000);
+
+/*
 const host = location.host;
 const id = location.pathname.split('/')[2];
 const participantElements = document.getElementsByClassName("match-participant");
@@ -11,10 +14,12 @@ const refresh = () => {
         })
         .then(match => match.participants.forEach((p, i) => {
             participantElements[i].children[0].innerHTML = p.competitorName;
-            participantElements[i].children[1].innerHTML = p.score;
+            const scoreText = p.score !== null ? p.score : '-';
+            participantElements[i].children[1].innerHTML = scoreText;
         }))
         .catch(err => console.log(err))
 }
 
 refresh();
-setInterval(refresh, 1000)
+setInterval(refresh, 1000);
+*/

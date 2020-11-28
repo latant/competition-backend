@@ -1,17 +1,18 @@
-html, body {
+html, .match-frame {
     margin: 0;
     height: 100%;
 }
-body {
+.match-frame {
     display: grid;
     grid-template-columns: 25% 75%;
 }
-.match-logo-container {
+.match-logo {
     grid-column: 1 / 2;
     display: flex;
     align-items: center;
+    justify-content: center;
 }
-.match-logo-container > img {
+.match-logo > img {
     max-width: 100%;
     max-height: 100%
 }

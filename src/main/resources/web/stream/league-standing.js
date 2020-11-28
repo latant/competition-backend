@@ -1,4 +1,4 @@
-setInterval(() => location.reload(), 1000);
+setInterval(() => location.reload(), 3000);
 
 /*
 

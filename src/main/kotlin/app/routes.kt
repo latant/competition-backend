@@ -3,10 +3,10 @@ package app
 import app.dto.*
 import app.serialization.JsonConfig.json
 import app.service.*
-import atUTC
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.html.*
+import io.ktor.http.*
 import io.ktor.http.HttpStatusCode.Companion.OK
 import io.ktor.http.content.*
 import io.ktor.request.*
@@ -16,7 +16,6 @@ import kotlinx.serialization.encodeToString
 import resourceFile
 import startOfDay
 import toLocalDateTime
-import toZonedDateTime
 import userPrincipal
 import utcNow
 import java.time.LocalDateTime
@@ -45,6 +44,19 @@ fun Routing.configureRoutes() {
         val responseBody: List<CompetitionListElementResponse> = CompetitionRetrievalService
             .getCompetitionsBetween(startDateTime, endDateTime)
         call.respond(json.encodeToString(responseBody))
+    }
+
+    get("/competitions/{id}/stylesheet") {
+        val id = call.parameters["id"]!!.toLong()
+        val stylesheet = CompetitionRetrievalService.getCompetitionStylesheet(id)
+        call.respondText(stylesheet, contentType = ContentType.Text.CSS)
+    }
+
+    get("/competitions/{id}/stylesheet-base") {
+        val id = call.parameters["id"]!!.toLong()
+        val displayColor = CompetitionRetrievalService.getCompetitionDisplayColor(id)
+        val stylesheet = "body { background-color: $displayColor }"
+        call.respondText(stylesheet, contentType = ContentType.Text.CSS)
     }
 
     get("/matches/{id}/stream-view") {

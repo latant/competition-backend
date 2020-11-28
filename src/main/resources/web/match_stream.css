@@ -6,26 +6,26 @@ body {
     display: grid;
     grid-template-columns: 25% 75%;
 }
-.logo-container {
+.match-logo-container {
     grid-column: 1 / 2;
     display: flex;
     align-items: center;
 }
-.logo-container > img {
+.match-logo-container > img {
     max-width: 100%;
     max-height: 100%
 }
-.participants {
+.match-participants {
     grid-column: 2 / 3;
     display: flex;
     flex-direction: column;
 }
-.participant {
+.match-participant {
     flex-grow: 1;
     display: grid;
     grid-template-columns: 65% 35%;
 }
-.participant-name {
+.match-participant-name {
     grid-column: 1 / 2;
 
     border-radius: 10vh 0 0 10vh;
@@ -39,7 +39,7 @@ body {
     display: flex;
     align-items: center;
 }
-.participant-score {
+.match-participant-score {
     grid-column: 2 / 3;
 
     border-radius: 0 10vh 10vh 0;

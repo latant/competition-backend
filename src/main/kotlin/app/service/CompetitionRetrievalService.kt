@@ -38,6 +38,18 @@ object CompetitionRetrievalService {
         return group.toGroupDTO()
     }
 
+    fun getCompetitionStylesheet(id: Long): String {
+        return CompetitionGraph.readOnlyTransaction {
+            load<Competition>(id, depth = 0)?.styleSheet ?: RequestError.CompetitionNotFound()
+        }
+    }
+
+    fun getCompetitionDisplayColor(id: Long): String {
+        return CompetitionGraph.readOnlyTransaction {
+            load<Competition>(id, depth = 0)?.displayColor ?: RequestError.CompetitionNotFound()
+        }
+    }
+
     private fun Competition.toCompetitionListElementDTO(): CompetitionListElementResponse = when (this) {
         is League -> CompetitionListElementResponse.League(id!!, name, startDateTime)
         is Cup -> CompetitionListElementResponse.Cup(id!!, name, startDateTime)
@@ -172,8 +184,8 @@ object CompetitionRetrievalService {
         competitorId = competitor!!.id!!,
         score = score,
     )
-
     private fun League.standingsTable() = standingsTable(matches.toSet(), competitors)
+
     private fun Group.standingsTable() = standingsTable(matches.toSet(), competitors)
 
     fun standingsTable(matches: Set<Match>, competitors: List<Competitor>): StandingsTable {

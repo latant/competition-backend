@@ -82,6 +82,8 @@ class ApiTests {
                         CompetitionCreationRequest.Competitor("Hawks"),
                         CompetitionCreationRequest.Competitor("Sharks"),
                     ),
+                    displayColor = "#aaaaaa",
+                    styleSheet = ".match-participant-name { background-color: #000 }"
                 ))
             }.response
             assertEquals(OK, postResponse.status())

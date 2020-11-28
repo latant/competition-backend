@@ -13,18 +13,20 @@ object StreamingService {
         return {
             head {
                 link(rel = "stylesheet", href = "/static/match_stream.css")
+                link(rel = "stylesheet", href = "/competitions/${match.competition.id}/stylesheet-base")
+                link(rel = "stylesheet", href = "/competitions/${match.competition.id}/stylesheet")
             }
             body {
-                div("logo-container") {
+                div("match-logo-container") {
                     img(src = match.competition.logo) {  }
                 }
-                div("participants") {
+                div("match-participants") {
                     match.participations.forEach { p ->
-                        div("participant") {
-                            div("participant-name") {
+                        div("match-participant") {
+                            div("match-participant-name") {
                                 text(p.competitor?.name ?: "-")
                             }
-                            div("participant-score") {
+                            div("match-participant-score") {
                                 p.score?.let { text(it) }
                             }
                         }

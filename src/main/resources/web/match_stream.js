@@ -1,6 +1,6 @@
 const host = location.host;
 const id = location.pathname.split('/')[2];
-const participantElements = document.getElementsByClassName("participant");
+const participantElements = document.getElementsByClassName("match-participant");
 
 const refresh = () => {
     fetch(`http://${host}/matches/${id}`)

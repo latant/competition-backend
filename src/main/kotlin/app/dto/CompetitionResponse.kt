@@ -20,6 +20,10 @@ sealed class CompetitionResponse {
         val standingsTable: StandingsTable,
         val startDateTime: @Contextual LocalDateTime,
         val endDateTime: @Contextual LocalDateTime,
+        val description: String,
+        val displayColor: String,
+        val styleSheet: String,
+        val logo: String?,
     ) : CompetitionResponse()
 
     @Serializable
@@ -33,6 +37,10 @@ sealed class CompetitionResponse {
         val editable: Boolean?,
         val startDateTime: @Contextual LocalDateTime,
         val endDateTime: @Contextual LocalDateTime,
+        val description: String,
+        val displayColor: String,
+        val styleSheet: String,
+        val logo: String?,
     ) : CompetitionResponse()
 
     @Serializable
@@ -48,6 +56,10 @@ sealed class CompetitionResponse {
         val editable: Boolean?,
         val startDateTime: @Contextual LocalDateTime,
         val endDateTime: @Contextual LocalDateTime,
+        val description: String,
+        val displayColor: String,
+        val styleSheet: String,
+        val logo: String?,
     ) : CompetitionResponse() {
         @Serializable
         data class Group(

@@ -56,6 +56,10 @@ object CompetitionRetrievalService {
             standingsTable = standingsTable(),
             startDateTime = startDateTime,
             endDateTime = endDateTime,
+            description = description,
+            displayColor = displayColor,
+            styleSheet = styleSheet,
+            logo = logo,
         )
         is Cup -> CompetitionResponse.Cup(
             id = id!!,
@@ -66,6 +70,10 @@ object CompetitionRetrievalService {
             editable = editable,
             startDateTime = startDateTime,
             endDateTime = endDateTime,
+            description = description,
+            displayColor = displayColor,
+            styleSheet = styleSheet,
+            logo = logo,
         )
         is Tournament -> CompetitionResponse.Tournament(
             id = id!!,
@@ -78,6 +86,10 @@ object CompetitionRetrievalService {
             editable = editable,
             startDateTime = startDateTime,
             endDateTime = endDateTime,
+            description = description,
+            displayColor = displayColor,
+            styleSheet = styleSheet,
+            logo = logo,
         )
         else -> error("Unknown competition type: ${this::class.qualifiedName}")
     }

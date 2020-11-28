@@ -85,6 +85,9 @@ object MatchEditorService {
         when (state) {
             NOT_STARTED_YET -> {
                 if (newState == ENDED) RequestError.MatchCannotBeEndedBeforeBeingStarted()
+                if (newState == ONGOING) {
+                    participations.forEach { it.score = 0.0 }
+                }
                 state = newState
             }
             ONGOING -> {
@@ -102,6 +105,9 @@ object MatchEditorService {
 
     private fun Match.onEnded() {
         endDateTime = utcNow()
+        proceededMatchParticipation?.let { p ->
+            p.competitor = participations.maxByOrNull { it.score ?: Double.MIN_VALUE }!!.competitor!!
+        }
         group?.let { g ->
             // Resolves quotes for competitors
             if (g.matches.all { it.state == ENDED }) {

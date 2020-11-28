@@ -3,6 +3,7 @@ package app.model
 import org.neo4j.ogm.annotation.NodeEntity
 import org.neo4j.ogm.annotation.Relationship
 import org.neo4j.ogm.annotation.Relationship.INCOMING
+import org.neo4j.ogm.annotation.Relationship.OUTGOING
 import java.time.LocalDateTime
 
 @NodeEntity
@@ -28,6 +29,9 @@ class Match(
 
     @Relationship(MATCH_IN_GROUP)
     val group: Group? = null
+
+    @Relationship(IS_MATCH_TO_PROCEED_WITH, direction = OUTGOING)
+    val proceededMatchParticipation: ProceededMatchParticipation? = null
 
     enum class State {
         NOT_STARTED_YET,

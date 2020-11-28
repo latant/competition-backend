@@ -14,6 +14,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import java.security.SecureRandom
+import java.time.LocalDateTime
 import java.time.ZonedDateTime
 
 fun main() {
@@ -23,8 +24,8 @@ fun main() {
 
     Thread.sleep(2000)
 
-    val startDateTime = ZonedDateTime.now().minusYears(1).toString().urlEncoded()
-    val endDateTime = ZonedDateTime.now().plusYears(1).toString().urlEncoded()
+    val startDateTime = LocalDateTime.now().minusYears(1).toString().urlEncoded()
+    val endDateTime = LocalDateTime.now().plusYears(1).toString().urlEncoded()
 
     val client = HttpClient {}
 

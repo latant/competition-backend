@@ -18,6 +18,7 @@ import org.junit.Test
 import org.junit.contrib.java.lang.system.EnvironmentVariables
 import resourceFileText
 import java.security.SecureRandom
+import java.time.LocalDateTime
 import java.time.ZonedDateTime
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -171,7 +172,7 @@ class ApiTests {
             testCupCreation()
             testTournamentCreation()
             val getMatchesResponse = handleRequest(Get,
-                "/matches?startDateTime=${ZonedDateTime.now().minusHours(1).toString().urlEncoded()}").response
+                "/matches?startDateTime=${LocalDateTime.now().minusHours(1).toString().urlEncoded()}").response
             assertEquals(OK, getMatchesResponse.status())
             assertNotNull(getMatchesResponse.body<List<MatchListElementResponse>>())
             assertEquals(28 + 7 + ((6 * 2) + 3), getMatchesResponse.body<List<MatchListElementResponse>>()!!.size)
@@ -192,7 +193,7 @@ class ApiTests {
             testAllMatches()
 
             val getResponse1 = handleRequest(Get,
-                "/my-matches?startDateTime=${ZonedDateTime.now().minusHours(1).toString().urlEncoded()}") {
+                "/my-matches?startDateTime=${LocalDateTime.now().minusHours(1).toString().urlEncoded()}") {
                 authenticate(accessToken1)
             }.response
             assertEquals(OK, getResponse1.status())
@@ -200,7 +201,7 @@ class ApiTests {
             assertEquals(28 + 7 + ((6 * 2) + 3), getResponse1.body<List<MatchListElementResponse>>()!!.size)
 
             val getResponse2 = handleRequest(Get,
-                "/my-matches?startDateTime=${ZonedDateTime.now().minusHours(1).toString().urlEncoded()}") {
+                "/my-matches?startDateTime=${LocalDateTime.now().minusHours(1).toString().urlEncoded()}") {
                 authenticate(accesstoken2)
             }.response
             assertEquals(OK, getResponse2.status())

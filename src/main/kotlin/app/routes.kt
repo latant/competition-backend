@@ -15,6 +15,7 @@ import io.ktor.routing.*
 import kotlinx.serialization.encodeToString
 import resourceFile
 import startOfDay
+import toLocalDateTime
 import toZonedDateTime
 import userPrincipal
 import utcNow
@@ -165,8 +166,8 @@ fun Routing.configureRoutes() {
 
 
 fun ApplicationRequest.startDateTimeAndEndDateTimeLenientRequestParams(): Pair<LocalDateTime, LocalDateTime> {
-    val minDateTime = queryParameters["minDateTime"]?.toZonedDateTime()?.atUTC()
-    val maxDateTime = queryParameters["maxDateTime"]?.toZonedDateTime()?.atUTC()
+    val minDateTime = queryParameters["minDateTime"]?.toLocalDateTime()
+    val maxDateTime = queryParameters["maxDateTime"]?.toLocalDateTime()
     return when {
         minDateTime != null && maxDateTime != null -> minDateTime to maxDateTime
         minDateTime != null -> minDateTime to minDateTime.plusDays(1)

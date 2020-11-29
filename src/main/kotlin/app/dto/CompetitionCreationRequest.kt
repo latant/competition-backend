@@ -4,7 +4,7 @@ import app.validation.*
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import java.time.ZonedDateTime
+import java.time.LocalDateTime
 
 @Serializable
 sealed class CompetitionCreationRequest {
@@ -18,8 +18,8 @@ sealed class CompetitionCreationRequest {
     @SerialName("League")
     data class League(
         val name: String,
-        val startDateTime: @Contextual ZonedDateTime,
-        val endDateTime: @Contextual ZonedDateTime,
+        val startDateTime: @Contextual LocalDateTime,
+        val endDateTime: @Contextual LocalDateTime,
         val displayColor: String = "#bbbbbb",
         val description: String = "",
         val competitors: List<Competitor>,
@@ -39,8 +39,8 @@ sealed class CompetitionCreationRequest {
     @SerialName("Cup")
     data class Cup(
         val name: String,
-        val startDateTime: @Contextual ZonedDateTime,
-        val endDateTime: @Contextual ZonedDateTime,
+        val startDateTime: @Contextual LocalDateTime,
+        val endDateTime: @Contextual LocalDateTime,
         val displayColor: String = "#bbbbbb",
         val description: String = "",
         val competitors: List<Competitor>,
@@ -58,8 +58,8 @@ sealed class CompetitionCreationRequest {
     @SerialName("Tournament")
     data class Tournament(
         val name: String,
-        val startDateTime: @Contextual ZonedDateTime,
-        val endDateTime: @Contextual ZonedDateTime,
+        val startDateTime: @Contextual LocalDateTime,
+        val endDateTime: @Contextual LocalDateTime,
         val displayColor: String = "#bbbbbb",
         val description: String = "",
         val competitors: List<Competitor>,

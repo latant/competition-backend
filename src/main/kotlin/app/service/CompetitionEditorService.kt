@@ -7,7 +7,6 @@ import app.error.RequestError
 import app.model.Competition
 import app.model.Group
 import app.security.UserPrincipal
-import atUTC
 import org.neo4j.ogm.session.load
 
 object CompetitionEditorService {
@@ -19,8 +18,8 @@ object CompetitionEditorService {
                 RequestError.UserCannotEditCompetition()
             }
             update.name?.let { competition.name = it }
-            update.startDateTime?.let { competition.startDateTime = it.atUTC() }
-            update.endDateTime?.let { competition.endDateTime = it.atUTC() }
+            update.startDateTime?.let { competition.startDateTime = it }
+            update.endDateTime?.let { competition.endDateTime = it }
             update.description?.let { competition.description = it }
             update.displayColor?.let { competition.displayColor = it }
             update.logo?.let { competition.logo = it }

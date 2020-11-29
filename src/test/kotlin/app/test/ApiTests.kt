@@ -19,7 +19,6 @@ import org.junit.contrib.java.lang.system.EnvironmentVariables
 import resourceFileText
 import java.security.SecureRandom
 import java.time.LocalDateTime
-import java.time.ZonedDateTime
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
@@ -70,8 +69,8 @@ class ApiTests {
                 authenticate(accessToken1)
                 jsonBody<CompetitionCreationRequest>(CompetitionCreationRequest.League(
                     name = "My League",
-                    startDateTime = ZonedDateTime.now(),
-                    endDateTime = ZonedDateTime.now().plusDays(2),
+                    startDateTime = LocalDateTime.now(),
+                    endDateTime = LocalDateTime.now().plusDays(2),
                     competitors = listOf(
                         CompetitionCreationRequest.Competitor("Eagles"),
                         CompetitionCreationRequest.Competitor("Lions"),
@@ -108,8 +107,8 @@ class ApiTests {
                 authenticate(accessToken1)
                 jsonBody<CompetitionCreationRequest>(CompetitionCreationRequest.Cup(
                     name = "My Cup",
-                    startDateTime = ZonedDateTime.now(),
-                    endDateTime = ZonedDateTime.now().plusDays(2),
+                    startDateTime = LocalDateTime.now(),
+                    endDateTime = LocalDateTime.now().plusDays(2),
                     competitors = listOf(
                         CompetitionCreationRequest.Competitor("Eagles"),
                         CompetitionCreationRequest.Competitor("Lions"),
@@ -146,8 +145,8 @@ class ApiTests {
                 authenticate(accessToken1)
                 jsonBody<CompetitionCreationRequest>(CompetitionCreationRequest.Tournament(
                     name = "My Tournament",
-                    startDateTime = ZonedDateTime.now(),
-                    endDateTime = ZonedDateTime.now().plusDays(2),
+                    startDateTime = LocalDateTime.now(),
+                    endDateTime = LocalDateTime.now().plusDays(2),
                     groupCount = 2,
                     playoffsCompetitorCount = 4,
                     competitors = listOf(
@@ -200,7 +199,7 @@ class ApiTests {
 
                 val patchMatchResponse = handleRequest(Patch, "/matches/$matchId") {
                     authenticate(accessToken1)
-                    jsonBody(MatchUpdateRequest(dateTime = ZonedDateTime.now().plusMinutes(5)))
+                    jsonBody(MatchUpdateRequest(dateTime = LocalDateTime.now().plusMinutes(5)))
                 }.response
                 assertEquals(OK, patchMatchResponse.status())
             }

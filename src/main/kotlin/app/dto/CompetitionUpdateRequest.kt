@@ -1,17 +1,19 @@
 package app.dto
 
-import app.validation.*
+import app.validation.requireNotBlank
+import app.validation.requireValidCssHexColor
+import app.validation.validations
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
-import java.time.ZonedDateTime
+import java.time.LocalDateTime
 
 @Serializable
 class CompetitionUpdateRequest(
     val name: String? = null,
     val description: String? = null,
     val logo: String? = null,
-    val startDateTime: @Contextual ZonedDateTime? = null,
-    val endDateTime: @Contextual ZonedDateTime? = null,
+    val startDateTime: @Contextual LocalDateTime? = null,
+    val endDateTime: @Contextual LocalDateTime? = null,
     val displayColor: String? = null,
     val styleSheet: String? = null,
 ) {

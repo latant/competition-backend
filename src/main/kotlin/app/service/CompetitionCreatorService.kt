@@ -4,7 +4,6 @@ import app.dao.CompetitionGraph
 import app.dto.CompetitionCreationRequest
 import app.model.*
 import app.security.UserPrincipal
-import atUTC
 import org.neo4j.ogm.session.Session
 import org.neo4j.ogm.session.load
 
@@ -111,8 +110,8 @@ object CompetitionCreatorService {
         name = name,
         description = description,
         logo = null,
-        startDateTime = startDateTime.atUTC(),
-        endDateTime = endDateTime.atUTC(),
+        startDateTime = startDateTime,
+        endDateTime = endDateTime,
         displayColor = displayColor,
         competitorCount = competitors.size,
         styleSheet = styleSheet,
@@ -121,8 +120,8 @@ object CompetitionCreatorService {
     private fun CompetitionCreationRequest.Cup.toNode() = Cup(
         name = name,
         description = description,
-        startDateTime = startDateTime.atUTC(),
-        endDateTime = endDateTime.atUTC(),
+        startDateTime = startDateTime,
+        endDateTime = endDateTime,
         logo = null,
         displayColor = displayColor,
         competitorCount = competitors.size,
@@ -133,8 +132,8 @@ object CompetitionCreatorService {
         name = name,
         description = description,
         logo = null,
-        startDateTime = startDateTime.atUTC(),
-        endDateTime = endDateTime.atUTC(),
+        startDateTime = startDateTime,
+        endDateTime = endDateTime,
         displayColor = displayColor,
         competitorCount = competitors.size,
         styleSheet = styleSheet,

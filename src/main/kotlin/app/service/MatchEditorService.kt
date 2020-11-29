@@ -10,7 +10,6 @@ import app.model.Match
 import app.model.Match.State.*
 import app.model.User
 import app.security.UserPrincipal
-import atUTC
 import org.neo4j.ogm.cypher.ComparisonOperator
 import org.neo4j.ogm.cypher.Filter
 import org.neo4j.ogm.session.load
@@ -61,7 +60,7 @@ object MatchEditorService {
             update.state?.let { match.updateState(it) }
             update.dateTime?.let {
                 if (editPermission != FULL) RequestError.UserCannotEditMatchDateTime
-                match.dateTime = it.atUTC()
+                match.dateTime = it
             }
             save(match)
         }

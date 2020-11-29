@@ -5,6 +5,8 @@ import io.ktor.http.HttpStatusCode.Companion.BadRequest
 import io.ktor.http.HttpStatusCode.Companion.Forbidden
 import io.ktor.http.HttpStatusCode.Companion.NotFound
 import io.ktor.http.HttpStatusCode.Companion.Unauthorized
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 enum class RequestError(val statusCode: HttpStatusCode, val message: String = "") {
 
@@ -29,4 +31,8 @@ enum class RequestError(val statusCode: HttpStatusCode, val message: String = ""
     ;
 
     operator fun invoke(message: String? = null): Nothing = throw RequestErrorException(this, message)
+
+    companion object {
+        val logger: Logger = LoggerFactory.getLogger(RequestError::class.java)
+    }
 }

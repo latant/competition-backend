@@ -9,7 +9,7 @@ import io.ktor.auth.jwt.*
 import org.neo4j.ogm.session.load
 import java.util.*
 
-private val secret: String = System.getenv("JWT_SECRET")
+private val secret: String = System.getenv("JWT_SECRET") ?: "sfdsafsadfdsa32r432f"
 private const val issuer = "competition-service"
 private const val validityMs = 36_000_00 * 10
 private val algorithm = Algorithm.HMAC512(secret)

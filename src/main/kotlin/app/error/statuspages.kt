@@ -4,16 +4,21 @@ import app.dto.RequestErrorResponse
 import io.ktor.application.*
 import io.ktor.features.*
 import io.ktor.response.*
+import io.ktor.util.pipeline.*
 import kotlinx.serialization.SerializationException
 
 fun StatusPages.Configuration.configureStatusPages() {
 
     exception<RequestErrorException> {
-        RequestError.logger.info("{}: {}", it.requestError, it.message)
-        call.respond(it.requestError.statusCode, RequestErrorResponse(it.requestError.name, it.requestError.message))
+        handle(it)
     }
 
     exception<SerializationException> {
-        RequestError.InvalidRequestBody(it.message)
+        handle(RequestErrorException(RequestError.InvalidRequestBody, it.message))
     }
+}
+
+suspend fun PipelineContext<Unit, ApplicationCall>.handle(ex: RequestErrorException) {
+    RequestError.logger.info("{}: {}", ex.requestError, ex.message)
+    call.respond(ex.requestError.statusCode, RequestErrorResponse(ex.requestError.name, ex.requestError.message))
 }

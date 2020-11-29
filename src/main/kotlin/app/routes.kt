@@ -116,6 +116,7 @@ fun Routing.configureRoutes() {
             call.respond(responseBody)
         }
 
+        // put?
         post("matches/{id}/editors") {
             val id = call.parameters["id"]!!.toLong()
             val userPrincipal = call.userPrincipal!!

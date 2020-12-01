@@ -13,7 +13,7 @@ object StreamingService {
         val match = CompetitionGraph.readOnlyTransaction { load<Match>(id, depth = 3) ?: RequestError.MatchNotFound() }
         return match.competition.streamHtml("match") {
             div("match-logo") {
-                img(src = match.competition.logo) { }
+                img(src = "data:image/jpg;base64," + match.competition.logo) { }
             }
             div("match-participants") {
                 match.participations.forEach { p ->
@@ -58,7 +58,7 @@ object StreamingService {
                 text(competition.name)
             }
             div("actual-matches-competition-logo") {
-                img(src = competition.logo)
+                img(src = "data:image/jpg;base64," + competition.logo)
             }
             div("actual-matches") {
                 actualMatches.forEach { m ->
@@ -87,7 +87,7 @@ object StreamingService {
                 text("${competition.name} - ${group.name}")
             }
             div("group-competition-logo") {
-                img(src = competition.logo)
+                img(src = "data:image/jpg;base64," + competition.logo)
             }
             table("group-table") {
                 tr("group-table-head") {
@@ -135,7 +135,7 @@ object StreamingService {
             text(name)
         }
         div("league-standing-logo") {
-            img(src = logo)
+            img(src = "data:image/jpg;base64," + logo)
         }
         table("league-standing-table") {
             tr("league-standing-table-head") {
@@ -182,7 +182,7 @@ object StreamingService {
             text(name)
         }
         div("cup-standing-logo") {
-            img(src = logo)
+            img(src = "data:image/jpg;base64," + logo)
         }
         div("cup-standing-matches") {
             val displayedMatches = matches.filter { m ->
